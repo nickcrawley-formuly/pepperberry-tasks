@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-A task management web app for **Pepperberry** — a rural property in Coolongatta, NSW, Australia. The property includes multiple paddocks, a main barn, homestead, dam, and driveway. The eastern paddocks are leased to **Coolongatta Riding Academy**.
+A task management web app for **Pepperberry** — a private home property in Coolongatta, NSW, Australia. The property includes multiple paddocks, a workshop, a house and driveway. The eastern paddocks are leased to **Regal Riding School**.
 
-The app lets farm owners assign and track tasks across the property. Tradespeople (fencers, plumbers, electricians, handymen) log in to see only their assigned work. Riding school staff see only riding-school-related tasks.
+The app lets the two owners assign and track tasks across the property. Workers (General workers, landscapers, fencers, plumbers, electricians, handymen, animal carers) log in to see only their assigned work. Riding school staff see only riding-school-related tasks.
 
 ### Horses
 
@@ -12,12 +12,15 @@ The eastern paddocks are leased for agistment — the agisted horses are a separ
 
 ### Tradesperson Workflow
 
-**Key domain concept:** Tradespeople are **not permanent staff**. They come for specific jobs and might not return for weeks. The typical workflow is:
+**Key domain concept:** Workers are **not permanent staff**. They come for specific jobs and might not return for weeks. The typical workflow is:
 1. Admin identifies a job that needs doing (e.g. fence repair in western paddock)
-2. Admin creates a task and assigns it to the relevant tradesperson
-3. Tradesperson logs in (often on their phone on-site), sees their assigned tasks
-4. Tradesperson updates status and adds photos/comments as they work
-5. Admin reviews completed work
+2. Admin creates a task and assigns it to the relevant tradesperson.
+3. Admin can manage all non-admin users access.
+4. Admin can create a job with a repeating schedule with a start and end date. Default start date is today.
+5. Tradesperson logs in (often on their phone on-site), sees their assigned tasks
+6. Tradesperson updates status and adds photos/comments as they work
+7. Admin reviews completed work and can close a job or mark as incomplete and add comments
+8. Both Admin and Workers can add up to 5 photos to jobs.
 
 The system must be simple enough for someone to log in on a phone, check their tasks, and mark them done. No training should be required.
 
@@ -135,7 +138,7 @@ pepperberry-tasks/
 ### `admin` (Farm Owners)
 - See ALL tasks across all categories and locations
 - Create, edit, delete, and reassign any task
-- Manage users (add/remove tradespeople and riding school staff)
+- Manage users (add/remove Workers and riding school staff)
 - Access the admin dashboard with overview stats
 
 ### `tradesperson` (Fencer, Plumber, Electrician, Handyman)
@@ -143,7 +146,7 @@ pepperberry-tasks/
 - Update status on their assigned tasks (`todo` → `in_progress` → `done`)
 - Add comments and photos to their assigned tasks
 - Cannot create, delete, or reassign tasks
-- Cannot see other tradespeople's tasks
+- Cannot see other Workers's tasks
 
 ### `riding_school` (Coolongatta Riding Academy Staff)
 - See ONLY tasks with `category = 'riding_school'`
@@ -158,14 +161,17 @@ Use these exact string values in the `location` column:
 
 | Value | Description |
 |-------|-------------|
-| `main_barn` | Main barn / equipment storage |
-| `homestead` | Homestead / main house |
-| `eastern_paddock` | Eastern paddocks (leased to riding academy) |
-| `western_paddock` | Western paddocks |
+| `workshop` | Main barn / equipment storage |
+| `house` | Homestead / main house |
+| `Big_Paddock` | Eastern paddocks (leased to riding academy) |
+| `Front_paddock` | Western paddocks |
+| `Back_paddock` | Western paddocks | 
 | `driveway` | Main driveway and access road |
 | `riding_arena` | Riding arena (riding academy) |
 | `stables` | Stables (riding academy) |
-| `dam` | Dam and surrounding area |
+| `Front_garden` | front garden area |
+| `Back_garden` | back garden area |
+| `VegebtalePatch` | Veggie beds |
 | `front_gate` | Front gate and entrance |
 
 ## Task Categories
@@ -175,10 +181,11 @@ Use these exact string values in the `category` column:
 | Value | Description |
 |-------|-------------|
 | `maintenance` | General property maintenance |
-| `riding_school` | Riding academy related (arena, stables, eastern paddock) |
-| `livestock` | Livestock management |
+| `horses` | Livestock management |
+| `donkeys` | Livestock management |
 | `fencing` | Fencing repairs and new fencing |
 | `general` | Catch-all for anything else |
+
 
 ## Task Statuses
 
@@ -236,7 +243,7 @@ vercel --prod
 ### Styling
 - **Tailwind CSS only.** No CSS modules, no styled-components.
 - Use Tailwind's design system (spacing scale, color palette). Avoid arbitrary values where possible.
-- Mobile-first responsive design. The primary use case is tradespeople on phones.
+- Mobile-first responsive design. The primary use case is Workers on phones.
 - **Light and elegant theme.** Light backgrounds, clean typography, generous whitespace. No dark mode. The UI should feel polished and high-quality — never cluttered or heavy.
 
 ### API Routes
