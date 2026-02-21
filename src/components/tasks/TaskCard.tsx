@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Task } from '@/lib/types';
 import {
   STATUS_LABELS,
@@ -37,7 +38,10 @@ export default function TaskCard({ task }: { task: Task }) {
   const overdue = isOverdue(task);
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200 p-5 hover:border-stone-300 transition">
+    <Link
+      href={`/tasks/${task.id}`}
+      className="block bg-white rounded-xl border border-stone-200 p-5 hover:border-stone-300 transition"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-medium text-stone-800 leading-snug">
@@ -82,6 +86,6 @@ export default function TaskCard({ task }: { task: Task }) {
           </span>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
