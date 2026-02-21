@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import LogoutButton from './LogoutButton';
 import TaskList from '@/components/tasks/TaskList';
+import PushNotificationPrompt from '@/components/PushNotificationPrompt';
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -38,6 +39,7 @@ export default async function DashboardPage() {
                 {session.role.replace('_', ' ')}
               </p>
             </div>
+            <PushNotificationPrompt />
             <LogoutButton />
           </div>
         </div>

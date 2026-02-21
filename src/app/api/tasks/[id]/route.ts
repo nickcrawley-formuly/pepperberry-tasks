@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getSession } from '@/lib/auth';
-import { CATEGORIES, LOCATIONS, PRIORITIES, STATUSES } from '@/lib/constants';
+import { CATEGORIES, LOCATIONS, PRIORITIES, STATUSES, STATUS_LABELS } from '@/lib/constants';
+import { sendPushToUser, notifyUsersExcluding } from '@/lib/notifications';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -17,7 +18,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   // Fetch the task to check permissions
   const { data: task, error: fetchError } = await supabaseAdmin
     .from('tasks')
-    .select('id, assigned_to, category')
+    .select('id, assigned_to, category, title, created_by, status')
     .eq('id', id)
     .single();
 
@@ -48,6 +49,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     if (error) {
       return NextResponse.json({ error: 'Failed to update task' }, { status: 500 });
     }
+
+    if (task.created_by) {
+      sendPushToUser(task.created_by, {
+        title: 'Task status updated',
+        body: `"${task.title}" is now ${STATUS_LABELS[status] || status}`,
+        url: `/tasks/${id}`,
+      }).catch(() => {});
+    }
+
     return NextResponse.json({ ok: true });
   }
 
@@ -105,6 +115,29 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   if (updateError) {
     return NextResponse.json({ error: 'Failed to update task' }, { status: 500 });
+  }
+
+  // Notify on reassignment
+  if (body.assigned_to !== undefined && body.assigned_to !== task.assigned_to && body.assigned_to) {
+    sendPushToUser(body.assigned_to, {
+      title: 'Task assigned to you',
+      body: `"${task.title}" has been assigned to you`,
+      url: `/tasks/${id}`,
+    }).catch(() => {});
+  }
+
+  // Notify on status change
+  if (body.status !== undefined && body.status !== task.status) {
+    const effectiveAssignee = body.assigned_to !== undefined ? body.assigned_to : task.assigned_to;
+    notifyUsersExcluding(
+      [effectiveAssignee, task.created_by].filter(Boolean) as string[],
+      session.userId,
+      {
+        title: 'Task status updated',
+        body: `"${task.title}" is now ${STATUS_LABELS[body.status] || body.status}`,
+        url: `/tasks/${id}`,
+      }
+    ).catch(() => {});
   }
 
   return NextResponse.json({ ok: true });

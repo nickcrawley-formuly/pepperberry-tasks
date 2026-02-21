@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getSession } from '@/lib/auth';
 import { CATEGORIES, LOCATIONS, PRIORITIES, RECURRENCE_PATTERNS } from '@/lib/constants';
+import { sendPushToUser } from '@/lib/notifications';
 
 function generateDueDates(
   pattern: string,
@@ -115,6 +116,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create tasks' }, { status: 500 });
     }
 
+    if (tasks && tasks.length > 0 && assigned_to) {
+      sendPushToUser(assigned_to, {
+        title: 'New tasks assigned',
+        body: `${tasks.length} "${title.trim()}" tasks have been assigned to you`,
+        url: `/tasks/${tasks[0].id}`,
+      }).catch(() => {});
+    }
+
     return NextResponse.json({ task: tasks[0], count: tasks.length }, { status: 201 });
   }
 
@@ -137,6 +146,14 @@ export async function POST(request: NextRequest) {
   if (error) {
     console.error('Error creating task:', error);
     return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });
+  }
+
+  if (task && assigned_to) {
+    sendPushToUser(assigned_to, {
+      title: 'New task assigned',
+      body: `"${title.trim()}" has been assigned to you`,
+      url: `/tasks/${task.id}`,
+    }).catch(() => {});
   }
 
   return NextResponse.json({ task }, { status: 201 });
