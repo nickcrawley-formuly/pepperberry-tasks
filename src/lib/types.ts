@@ -27,6 +27,15 @@ export interface Task {
   created_user?: { name: string } | null;
 }
 
+export interface TaskPhoto {
+  id: string;
+  task_id: string;
+  storage_path: string;
+  uploaded_by: string;
+  created_at: string;
+  uploader?: { name: string } | null;
+}
+
 export interface TaskComment {
   id: string;
   task_id: string;

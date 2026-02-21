@@ -15,12 +15,12 @@ export default async function AdminUsersPage() {
     .order('created_at', { ascending: true });
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-200">
+    <div className="min-h-screen bg-stone-950">
+      <header className="bg-stone-900 border-b border-stone-700">
         <div className="max-w-2xl mx-auto px-5 py-4 flex items-center gap-4">
           <Link
             href="/dashboard"
-            className="text-stone-400 hover:text-stone-600 transition"
+            className="text-stone-500 hover:text-stone-300 transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +36,7 @@ export default async function AdminUsersPage() {
               <path d="m15 18-6-6 6-6" />
             </svg>
           </Link>
-          <h1 className="text-lg font-medium text-stone-800">Manage Users</h1>
+          <h1 className="text-lg font-medium text-stone-100">Manage Users</h1>
         </div>
       </header>
 

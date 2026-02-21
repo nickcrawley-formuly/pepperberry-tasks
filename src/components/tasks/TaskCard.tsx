@@ -8,16 +8,16 @@ import {
 } from '@/lib/constants';
 
 const STATUS_STYLES: Record<string, string> = {
-  todo: 'bg-stone-100 text-stone-600',
-  in_progress: 'bg-amber-50 text-amber-700',
-  done: 'bg-emerald-50 text-emerald-700',
+  todo: 'bg-stone-800 text-stone-300',
+  in_progress: 'bg-amber-900/30 text-amber-400',
+  done: 'bg-emerald-900/30 text-emerald-400',
 };
 
 const PRIORITY_STYLES: Record<string, string> = {
-  low: 'text-stone-400',
-  medium: 'text-stone-600',
-  high: 'text-orange-600',
-  urgent: 'text-red-600 font-semibold',
+  low: 'text-stone-500',
+  medium: 'text-stone-300',
+  high: 'text-orange-500',
+  urgent: 'text-red-500 font-semibold',
 };
 
 function formatDate(dateStr: string | null): string {
@@ -40,15 +40,15 @@ export default function TaskCard({ task }: { task: Task }) {
   return (
     <Link
       href={`/tasks/${task.id}`}
-      className="block bg-white rounded-xl border border-stone-200 p-5 hover:border-stone-300 transition"
+      className="block bg-stone-900 rounded-xl border border-stone-700 p-5 hover:border-stone-600 transition"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium text-stone-800 leading-snug">
+          <h3 className="text-sm font-medium text-stone-100 leading-snug">
             {task.title}
           </h3>
           {task.description && (
-            <p className="mt-1 text-xs text-stone-400 line-clamp-2">
+            <p className="mt-1 text-xs text-stone-500 line-clamp-2">
               {task.description}
             </p>
           )}
@@ -65,22 +65,22 @@ export default function TaskCard({ task }: { task: Task }) {
           {PRIORITY_LABELS[task.priority]}
         </span>
 
-        <span className="text-stone-400">
+        <span className="text-stone-500">
           {LOCATION_LABELS[task.location] || task.location}
         </span>
 
-        <span className="text-stone-400">
+        <span className="text-stone-500">
           {CATEGORY_LABELS[task.category] || task.category}
         </span>
 
         {task.assigned_user?.name && (
-          <span className="text-stone-500">
+          <span className="text-stone-400">
             {task.assigned_user.name}
           </span>
         )}
 
         {task.due_date && (
-          <span className={overdue ? 'text-red-500 font-medium' : 'text-stone-400'}>
+          <span className={overdue ? 'text-red-500 font-medium' : 'text-stone-500'}>
             {task.recurrence_pattern && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"

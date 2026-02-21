@@ -57,6 +57,16 @@ export const RECURRENCE_LABELS: Record<string, string> = {
   monthly: 'Monthly',
 };
 
+export const MAX_PHOTOS_PER_TASK = 5;
+export const MAX_PHOTO_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+export const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/heic',
+  'image/heif',
+  'image/webp',
+];
+
 export const LOCATION_LABELS: Record<string, string> = {
   workshop: 'Workshop',
   house: 'House',

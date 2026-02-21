@@ -122,14 +122,14 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
   }
 
   const selectClass =
-    'w-full rounded-lg border border-stone-200 px-3 py-2.5 text-sm text-stone-800 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-700 px-3 py-2.5 text-sm text-stone-100 bg-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
   const inputClass =
-    'w-full rounded-lg border border-stone-200 px-3 py-2.5 text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
-  const labelClass = 'block text-xs font-medium text-stone-500 mb-1.5';
+    'w-full rounded-lg border border-stone-700 px-3 py-2.5 text-sm text-stone-100 bg-stone-800 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
+  const labelClass = 'block text-xs font-medium text-stone-400 mb-1.5';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="bg-white rounded-xl border border-stone-200 p-5 space-y-5">
+      <div className="bg-stone-900 rounded-xl border border-stone-700 p-5 space-y-5">
         {/* Title */}
         <div>
           <label htmlFor="title" className={labelClass}>
@@ -162,7 +162,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-stone-200 p-5 space-y-5">
+      <div className="bg-stone-900 rounded-xl border border-stone-700 p-5 space-y-5">
         {/* Priority & Category */}
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -251,7 +251,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
       </div>
 
       {/* Schedule section */}
-      <div className="bg-white rounded-xl border border-stone-200 p-5 space-y-5">
+      <div className="bg-stone-900 rounded-xl border border-stone-700 p-5 space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="repeat" className={labelClass}>
@@ -336,7 +336,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
         <button
           type="submit"
           disabled={loading || (isRepeating && occurrenceCount === 0)}
-          className="flex-1 rounded-lg bg-stone-800 py-2.5 text-sm font-medium text-white hover:bg-stone-700 active:bg-stone-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 rounded-lg bg-amber-600 py-2.5 text-sm font-medium text-white hover:bg-amber-500 active:bg-amber-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading
             ? 'Creating...'
@@ -347,7 +347,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
         <button
           type="button"
           onClick={() => router.push('/dashboard')}
-          className="px-5 py-2.5 rounded-lg border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition"
+          className="px-5 py-2.5 rounded-lg border border-stone-700 text-sm font-medium text-stone-300 hover:bg-stone-800 transition"
         >
           Cancel
         </button>

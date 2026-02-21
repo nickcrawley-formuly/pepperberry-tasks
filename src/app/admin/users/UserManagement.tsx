@@ -44,7 +44,7 @@ export default function UserManagement({ initialUsers }: UserManagementProps) {
       {!showAddForm && (
         <button
           onClick={() => setShowAddForm(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-stone-800 text-white text-sm font-medium hover:bg-stone-700 transition"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 transition"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +136,7 @@ function UserRow({
 
   return (
     <div
-      className={`bg-white rounded-xl border border-stone-200 p-4 flex items-center justify-between ${
+      className={`bg-stone-900 rounded-xl border border-stone-700 p-4 flex items-center justify-between ${
         !user.is_active ? 'opacity-50' : ''
       }`}
     >
@@ -144,29 +144,29 @@ function UserRow({
         <div
           className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
             user.role === 'admin'
-              ? 'bg-stone-800 text-white'
+              ? 'bg-stone-600 text-white'
               : user.role === 'tradesperson'
-                ? 'bg-amber-100 text-amber-700'
-                : 'bg-emerald-100 text-emerald-700'
+                ? 'bg-amber-900/40 text-amber-400'
+                : 'bg-emerald-900/40 text-emerald-400'
           }`}
         >
           {user.name.charAt(0).toUpperCase()}
         </div>
         <div>
-          <p className="text-sm font-medium text-stone-800">{user.name}</p>
-          <p className="text-xs text-stone-400">{roleLabel}</p>
+          <p className="text-sm font-medium text-stone-100">{user.name}</p>
+          <p className="text-xs text-stone-500">{roleLabel}</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
         {!user.is_active && (
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-stone-100 text-stone-500">
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-stone-800 text-stone-400">
             Inactive
           </span>
         )}
         <button
           onClick={onEdit}
-          className="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-600 hover:bg-stone-50 transition"
+          className="px-3 py-1.5 rounded-lg border border-stone-700 text-xs font-medium text-stone-300 hover:bg-stone-800 transition"
         >
           Edit
         </button>
@@ -174,8 +174,8 @@ function UserRow({
           onClick={onToggleActive}
           className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition ${
             user.is_active
-              ? 'border-red-200 text-red-500 hover:bg-red-50'
-              : 'border-emerald-200 text-emerald-600 hover:bg-emerald-50'
+              ? 'border-red-700 text-red-500 hover:bg-red-900/30'
+              : 'border-emerald-700 text-emerald-400 hover:bg-emerald-900/30'
           }`}
         >
           {user.is_active ? 'Deactivate' : 'Activate'}
@@ -224,20 +224,20 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
   const selectClass =
-    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-800 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-xl border border-stone-200 p-5 space-y-4"
+      className="bg-stone-900 rounded-xl border border-stone-700 p-5 space-y-4"
     >
-      <p className="text-sm font-medium text-stone-700">Add New User</p>
+      <p className="text-sm font-medium text-stone-200">Add New User</p>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-500 mb-1">Name *</label>
+          <label className="block text-xs font-medium text-stone-400 mb-1">Name *</label>
           <input
             type="text"
             value={name}
@@ -248,7 +248,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-500 mb-1">PIN *</label>
+          <label className="block text-xs font-medium text-stone-400 mb-1">PIN *</label>
           <input
             type="text"
             inputMode="numeric"
@@ -264,7 +264,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-500 mb-1">Role *</label>
+          <label className="block text-xs font-medium text-stone-400 mb-1">Role *</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -277,7 +277,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
         </div>
         {role === 'tradesperson' && (
           <div>
-            <label className="block text-xs font-medium text-stone-500 mb-1">Specialty</label>
+            <label className="block text-xs font-medium text-stone-400 mb-1">Specialty</label>
             <select
               value={tradeType}
               onChange={(e) => setTradeType(e.target.value)}
@@ -300,14 +300,14 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
         <button
           type="submit"
           disabled={loading || pin.length < 4}
-          className="px-4 py-2 rounded-lg bg-stone-800 text-white text-sm font-medium hover:bg-stone-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Adding...' : 'Add User'}
         </button>
         <button
           type="button"
           onClick={() => onDone(null)}
-          className="px-4 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition"
+          className="px-4 py-2 rounded-lg border border-stone-700 text-sm font-medium text-stone-300 hover:bg-stone-800 transition"
         >
           Cancel
         </button>
@@ -376,20 +376,20 @@ function EditUserForm({
   }
 
   const inputClass =
-    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
   const selectClass =
-    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-800 bg-white focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-xl border-2 border-stone-300 p-5 space-y-4"
+      className="bg-stone-900 rounded-xl border-2 border-stone-600 p-5 space-y-4"
     >
-      <p className="text-sm font-medium text-stone-700">Edit User</p>
+      <p className="text-sm font-medium text-stone-200">Edit User</p>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-500 mb-1">Name</label>
+          <label className="block text-xs font-medium text-stone-400 mb-1">Name</label>
           <input
             type="text"
             value={name}
@@ -399,8 +399,8 @@ function EditUserForm({
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-500 mb-1">
-            Reset PIN <span className="text-stone-400 font-normal">(leave blank to keep)</span>
+          <label className="block text-xs font-medium text-stone-400 mb-1">
+            Reset PIN <span className="text-stone-500 font-normal">(leave blank to keep)</span>
           </label>
           <input
             type="text"
@@ -416,7 +416,7 @@ function EditUserForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-500 mb-1">Role</label>
+          <label className="block text-xs font-medium text-stone-400 mb-1">Role</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -429,7 +429,7 @@ function EditUserForm({
         </div>
         {role === 'tradesperson' && (
           <div>
-            <label className="block text-xs font-medium text-stone-500 mb-1">Specialty</label>
+            <label className="block text-xs font-medium text-stone-400 mb-1">Specialty</label>
             <select
               value={tradeType}
               onChange={(e) => setTradeType(e.target.value)}
@@ -452,14 +452,14 @@ function EditUserForm({
         <button
           type="submit"
           disabled={loading}
-          className="px-4 py-2 rounded-lg bg-stone-800 text-white text-sm font-medium hover:bg-stone-700 transition disabled:opacity-50"
+          className="px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 transition disabled:opacity-50"
         >
           {loading ? 'Saving...' : 'Save'}
         </button>
         <button
           type="button"
           onClick={() => onDone(null)}
-          className="px-4 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition"
+          className="px-4 py-2 rounded-lg border border-stone-700 text-sm font-medium text-stone-300 hover:bg-stone-800 transition"
         >
           Cancel
         </button>

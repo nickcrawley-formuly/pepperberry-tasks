@@ -122,6 +122,18 @@ export async function DELETE(_request: NextRequest, { params }: Params) {
 
   const { id } = await params;
 
+  // Clean up photos from storage before deleting (DB records cascade-delete)
+  const { data: taskPhotos } = await supabaseAdmin
+    .from('task_photos')
+    .select('storage_path')
+    .eq('task_id', id);
+
+  if (taskPhotos && taskPhotos.length > 0) {
+    await supabaseAdmin.storage
+      .from('task-photos')
+      .remove(taskPhotos.map((p) => p.storage_path));
+  }
+
   const { error } = await supabaseAdmin
     .from('tasks')
     .delete()

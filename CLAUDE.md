@@ -247,7 +247,7 @@ vercel --prod
 - **Tailwind CSS only.** No CSS modules, no styled-components.
 - Use Tailwind's design system (spacing scale, color palette). Avoid arbitrary values where possible.
 - Mobile-first responsive design. The primary use case is Workers on phones.
-- **Light and elegant theme.** Light backgrounds, clean typography, generous whitespace. No dark mode. The UI should feel polished and high-quality — never cluttered or heavy.
+- **Dark and elegant theme.** Dark backgrounds (`stone-950` pages, `stone-900` cards), light text (`stone-100` primary, `stone-200`–`stone-400` secondary), `stone-700` borders, `amber-600` primary buttons. Clean typography, generous whitespace. The UI should feel polished and high-quality — never cluttered or heavy.
 
 ### API Routes
 - All API routes in `src/app/api/`.

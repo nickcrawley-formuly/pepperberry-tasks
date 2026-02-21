@@ -38,26 +38,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50">
+    <div className="min-h-screen flex items-center justify-center bg-stone-950">
       <div className="w-full max-w-sm mx-auto px-6">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-light tracking-tight text-stone-800">
+          <h1 className="text-3xl font-light tracking-tight text-stone-100">
             Pepperberry Farm
           </h1>
-          <p className="mt-1 text-sm text-stone-400 tracking-wide">
+          <p className="mt-1 text-sm text-stone-500 tracking-wide">
             Task Board
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-sm border border-stone-200 p-8"
+          className="bg-stone-900 rounded-2xl shadow-sm border border-stone-700 p-8"
         >
           <div className="space-y-5">
             <div>
               <label
                 htmlFor="name"
-                className="block text-xs font-medium text-stone-500 mb-1.5"
+                className="block text-xs font-medium text-stone-400 mb-1.5"
               >
                 Name
               </label>
@@ -68,14 +68,14 @@ export default function LoginPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name"
                 required
-                className="w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition"
+                className="w-full rounded-lg border border-stone-700 bg-stone-800 px-4 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition"
               />
             </div>
 
             <div>
               <label
                 htmlFor="pin"
-                className="block text-xs font-medium text-stone-500 mb-1.5"
+                className="block text-xs font-medium text-stone-400 mb-1.5"
               >
                 PIN
               </label>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
                 placeholder="4-digit PIN"
                 required
-                className="w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition tracking-[0.3em]"
+                className="w-full rounded-lg border border-stone-700 bg-stone-800 px-4 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition tracking-[0.3em]"
               />
             </div>
 
@@ -99,14 +99,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || pin.length < 4}
-              className="w-full rounded-lg bg-stone-800 py-2.5 text-sm font-medium text-white hover:bg-stone-700 active:bg-stone-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full rounded-lg bg-amber-600 py-2.5 text-sm font-medium text-white hover:bg-amber-500 active:bg-amber-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
         </form>
 
-        <p className="mt-6 text-center text-xs text-stone-300">
+        <p className="mt-6 text-center text-xs text-stone-600">
           Coolongatta, NSW
         </p>
       </div>

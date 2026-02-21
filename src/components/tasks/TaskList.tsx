@@ -35,7 +35,7 @@ export default function TaskList({ tasks }: TaskListProps) {
       <div className="mt-4 space-y-3">
         {filtered.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-sm text-stone-400">No tasks found</p>
+            <p className="text-sm text-stone-500">No tasks found</p>
           </div>
         ) : (
           filtered.map((task) => <TaskCard key={task.id} task={task} />)
