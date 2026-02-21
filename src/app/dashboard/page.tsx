@@ -1,6 +1,8 @@
 import { getSession } from '@/lib/auth';
+import { fetchTasks } from '@/lib/tasks';
 import { redirect } from 'next/navigation';
 import LogoutButton from './LogoutButton';
+import TaskList from '@/components/tasks/TaskList';
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -9,13 +11,20 @@ export default async function DashboardPage() {
     redirect('/');
   }
 
+  const tasks = await fetchTasks(session);
+
+  const greeting =
+    session.role === 'admin'
+      ? `${tasks.filter((t) => t.status !== 'done').length} open tasks`
+      : `${tasks.filter((t) => t.status !== 'done').length} tasks for you`;
+
   return (
     <div className="min-h-screen bg-stone-50">
       <header className="bg-white border-b border-stone-200">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-lg font-medium text-stone-800">
-              Pepperberry Farm
+              Pepperberry
             </h1>
             <p className="text-xs text-stone-400">Task Board</p>
           </div>
@@ -33,13 +42,12 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        <h2 className="text-xl font-light text-stone-800 mb-6">
-          Welcome back, {session.name}
-        </h2>
-        <p className="text-sm text-stone-500">
-          Tasks and dashboard coming soon.
-        </p>
+      <main className="max-w-2xl mx-auto px-5 py-6">
+        <div className="mb-5">
+          <p className="text-sm text-stone-500">{greeting}</p>
+        </div>
+
+        <TaskList tasks={tasks} />
       </main>
     </div>
   );
