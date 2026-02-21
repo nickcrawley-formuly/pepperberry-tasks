@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import LogoutButton from './LogoutButton';
 import TaskList from '@/components/tasks/TaskList';
+import DashboardStats from '@/components/dashboard/DashboardStats';
 import PushNotificationPrompt from '@/components/PushNotificationPrompt';
 
 export default async function DashboardPage() {
@@ -95,6 +96,8 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
+
+        {session.role === 'admin' && <DashboardStats tasks={tasks} />}
 
         <TaskList tasks={tasks} />
       </main>

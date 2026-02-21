@@ -1,0 +1,90 @@
+import { Task } from '@/lib/types';
+
+interface DashboardStatsProps {
+  tasks: Task[];
+}
+
+export default function DashboardStats({ tasks }: DashboardStatsProps) {
+  const today = new Date(new Date().toDateString());
+  const openTasks = tasks.filter((t) => t.status !== 'done');
+
+  const overdue = openTasks.filter(
+    (t) => t.due_date && new Date(t.due_date) < today
+  ).length;
+
+  const urgentHigh = openTasks.filter(
+    (t) => t.priority === 'urgent' || t.priority === 'high'
+  ).length;
+
+  const unassigned = openTasks.filter((t) => !t.assigned_to).length;
+
+  // Worker workload — group open tasks by assigned user
+  const workload: { name: string; count: number }[] = [];
+  const byUser = new Map<string, { name: string; count: number }>();
+  let unassignedCount = 0;
+
+  for (const t of openTasks) {
+    if (!t.assigned_to) {
+      unassignedCount++;
+    } else {
+      const existing = byUser.get(t.assigned_to);
+      if (existing) {
+        existing.count++;
+      } else {
+        byUser.set(t.assigned_to, {
+          name: t.assigned_user?.name || 'Unknown',
+          count: 1,
+        });
+      }
+    }
+  }
+
+  byUser.forEach((v) => workload.push(v));
+  workload.sort((a, b) => b.count - a.count);
+  if (unassignedCount > 0) {
+    workload.push({ name: 'Unassigned', count: unassignedCount });
+  }
+
+  const stats = [
+    { label: 'Open', value: openTasks.length, color: 'text-stone-100' },
+    { label: 'Overdue', value: overdue, color: overdue > 0 ? 'text-red-500' : 'text-stone-100' },
+    { label: 'Urgent / High', value: urgentHigh, color: urgentHigh > 0 ? 'text-orange-500' : 'text-stone-100' },
+    { label: 'Unassigned', value: unassigned, color: unassigned > 0 ? 'text-amber-400' : 'text-stone-100' },
+  ];
+
+  return (
+    <div className="space-y-4 mb-6">
+      {/* Summary cards */}
+      <div className="grid grid-cols-4 gap-3">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="bg-stone-900 rounded-xl border border-stone-700 px-3 py-3 text-center"
+          >
+            <p className={`text-2xl font-semibold ${s.color}`}>{s.value}</p>
+            <p className="text-[11px] text-stone-500 mt-0.5">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Worker workload */}
+      {workload.length > 0 && (
+        <div className="bg-stone-900 rounded-xl border border-stone-700 px-4 py-3">
+          <p className="text-xs font-medium text-stone-400 mb-2">Workload</p>
+          <div className="space-y-1.5">
+            {workload.map((w) => (
+              <div key={w.name} className="flex items-center justify-between">
+                <span className={`text-sm ${w.name === 'Unassigned' ? 'text-stone-500 italic' : 'text-stone-200'}`}>
+                  {w.name}
+                </span>
+                <span className="text-sm text-stone-400">
+                  {w.count} task{w.count !== 1 ? 's' : ''}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
