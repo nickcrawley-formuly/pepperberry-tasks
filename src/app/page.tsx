@@ -111,7 +111,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <img
-            src="/PBLogo_Transparent.png"
+            src="/PBLogo.png"
             alt="Pepperberry Farm"
             className="w-40 mx-auto object-contain"
           />
