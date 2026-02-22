@@ -5,6 +5,7 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 const COOKIE_NAME = 'pb-session';
 
 const PUBLIC_PATHS = ['/', '/api/auth/login', '/api/auth/users'];
+const SET_PIN_PATHS = ['/set-pin', '/api/auth/set-pin'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -22,7 +23,13 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, SECRET);
+
+    // If user must set PIN, only allow set-pin paths
+    if (payload.mustSetPin && !SET_PIN_PATHS.includes(pathname)) {
+      return NextResponse.redirect(new URL('/set-pin', request.url));
+    }
+
     return NextResponse.next();
   } catch {
     // Invalid or expired token — redirect to login

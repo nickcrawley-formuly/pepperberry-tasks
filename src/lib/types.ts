@@ -4,6 +4,7 @@ export interface User {
   role: 'admin' | 'tradesperson' | 'riding_school';
   trade_type: string | null;
   is_active: boolean;
+  must_set_pin: boolean;
   created_at: string;
 }
 

@@ -8,6 +8,7 @@ export interface SessionPayload {
   userId: string;
   name: string;
   role: 'admin' | 'tradesperson' | 'riding_school';
+  mustSetPin?: boolean;
 }
 
 export async function createSession(payload: SessionPayload): Promise<string> {
