@@ -65,21 +65,27 @@ export default function TaskList({ tasks, role, users = [] }: TaskListProps) {
       }
     }
 
-    // Sort: workers get priority-first, admins get newest-first (already from server)
-    if (!isAdmin) {
-      result = [...result].sort((a, b) => {
+    // Sort: urgent tasks always first, then priority-based for workers
+    result = [...result].sort((a, b) => {
+      // Urgent tasks always come first
+      const aUrgent = a.priority === 'urgent' ? 1 : 0;
+      const bUrgent = b.priority === 'urgent' ? 1 : 0;
+      if (aUrgent !== bUrgent) return bUrgent - aUrgent;
+
+      // For non-admin, also sort by remaining priority levels
+      if (!isAdmin) {
         const pw = (PRIORITY_WEIGHT[b.priority] ?? 0) - (PRIORITY_WEIGHT[a.priority] ?? 0);
         if (pw !== 0) return pw;
+      }
 
-        // Due date: soonest first, nulls last
-        if (a.due_date && b.due_date) {
-          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-        }
-        if (a.due_date) return -1;
-        if (b.due_date) return 1;
-        return 0;
-      });
-    }
+      // Due date: soonest first, nulls last
+      if (a.due_date && b.due_date) {
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+      }
+      if (a.due_date) return -1;
+      if (b.due_date) return 1;
+      return 0;
+    });
 
     return result;
   }, [tasks, activeStatus, adminFilters, isAdmin]);
