@@ -161,9 +161,6 @@ export default function LoginPage() {
 
             {/* PIN Input */}
             <div>
-              <label className="block text-xs font-medium text-stone-400 mb-2 uppercase tracking-wider">
-                Enter your PIN
-              </label>
               <div className="flex gap-3 justify-center">
                 {pin.map((digit, i) => (
                   <input
