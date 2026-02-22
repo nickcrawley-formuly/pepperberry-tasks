@@ -109,24 +109,11 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-600/10 mb-4">
-            <svg
-              className="w-8 h-8 text-amber-500"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.5 0 3-.3 4.3-.9" />
-              <path d="M15 2.5c1.5 2.5 2 5.5 2 9.5" />
-              <path d="M9 2.5C7.5 5 7 8 7 12s.5 7 2 9.5" />
-              <path d="M2.5 9h19M2.5 15h12" />
-              <path d="M19 14c-1.5 0-3 1-3 3s1.5 3 3 3c1 0 2-.5 2.5-1" />
-              <path d="M20 15.5V18h2" />
-            </svg>
-          </div>
+          <img
+            src="/PBLogo_Transparent.png"
+            alt="Pepperberry Farm"
+            className="w-28 h-28 mx-auto mb-4 object-contain"
+          />
           <h1 className="text-3xl font-light tracking-tight text-stone-100">
             Pepperberry Farm
           </h1>
