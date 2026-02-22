@@ -120,7 +120,7 @@ export default function LoginPage() {
         {/* Login Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl border border-stone-200 p-8 shadow-xl shadow-stone-200/50"
+          className="bg-stone-900 rounded-2xl border border-stone-700 p-8 shadow-xl shadow-black/20"
         >
           <div className="space-y-6">
             {/* User Select */}
@@ -135,7 +135,7 @@ export default function LoginPage() {
                     if (e.target.value) pinRefs.current[0]?.focus();
                   }}
                   disabled={usersLoading}
-                  className="w-full appearance-none rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50 transition disabled:opacity-50"
+                  className="w-full appearance-none rounded-lg border border-stone-700 bg-stone-800 px-4 py-3 text-sm text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50 transition disabled:opacity-50"
                 >
                   <option value="">
                     {usersLoading ? 'Loading...' : 'Select your name'}
@@ -148,7 +148,7 @@ export default function LoginPage() {
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                   <svg
-                    className="h-4 w-4 text-stone-500"
+                    className="h-4 w-4 text-stone-400"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -175,10 +175,10 @@ export default function LoginPage() {
                     onKeyDown={(e) => handlePinKeyDown(i, e)}
                     onPaste={i === 0 ? handlePinPaste : undefined}
                     aria-label={`PIN digit ${i + 1}`}
-                    className={`w-14 h-14 text-center text-xl rounded-lg border bg-stone-50 text-stone-900 focus:outline-none transition ${
+                    className={`w-14 h-14 text-center text-xl rounded-lg border bg-stone-800 text-stone-100 focus:outline-none transition ${
                       i === nextPinIndex
                         ? 'border-emerald-400 ring-2 ring-emerald-400/50'
-                        : 'border-stone-200'
+                        : 'border-stone-700'
                     }`}
                   />
                 ))}
@@ -187,7 +187,7 @@ export default function LoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-lg px-4 py-2.5">
+              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-900/30 rounded-lg px-4 py-2.5">
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 8v4m0 4h.01" />
