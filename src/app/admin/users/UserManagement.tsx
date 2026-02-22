@@ -158,12 +158,7 @@ function UserRow({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        {!user.is_active && (
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-stone-800 text-stone-400">
-            Inactive
-          </span>
-        )}
+      <div className="flex items-center gap-3">
         <button
           onClick={onEdit}
           className="px-3 py-1.5 rounded-lg border border-stone-700 text-xs font-medium text-stone-300 hover:bg-stone-800 transition"
@@ -172,13 +167,18 @@ function UserRow({
         </button>
         <button
           onClick={onToggleActive}
-          className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition ${
-            user.is_active
-              ? 'border-red-700 text-red-500 hover:bg-red-900/30'
-              : 'border-emerald-700 text-emerald-400 hover:bg-emerald-900/30'
+          role="switch"
+          aria-checked={user.is_active}
+          aria-label={user.is_active ? 'Deactivate user' : 'Activate user'}
+          className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+            user.is_active ? 'bg-emerald-600' : 'bg-stone-700'
           }`}
         >
-          {user.is_active ? 'Deactivate' : 'Activate'}
+          <span
+            className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+              user.is_active ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
         </button>
       </div>
     </div>

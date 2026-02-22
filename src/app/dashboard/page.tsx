@@ -45,14 +45,9 @@ export default async function DashboardPage() {
             <p className="text-xs text-stone-500">Task Board</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-sm font-medium text-stone-200">
-                {session.name}
-              </p>
-              <p className="text-xs text-stone-500 capitalize">
-                {session.role.replace('_', ' ')}
-              </p>
-            </div>
+            <p className="text-sm font-medium text-stone-200">
+              {session.name}
+            </p>
             <PushNotificationPrompt />
             <LogoutButton />
           </div>
