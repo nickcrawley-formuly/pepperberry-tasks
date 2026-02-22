@@ -15,6 +15,7 @@ import DeleteTaskButton from '@/components/tasks/DeleteTaskButton';
 import DeleteSeriesButton from '@/components/tasks/DeleteSeriesButton';
 import PhotoSection from '@/components/tasks/PhotoSection';
 import ActivityLog from '@/components/tasks/ActivityLog';
+import TransferTask from '@/components/tasks/TransferTask';
 
 const PRIORITY_DOT: Record<string, string> = {
   low: 'bg-stone-500',
@@ -92,6 +93,15 @@ export default async function TaskDetailPage({
     .order('created_at', { ascending: true });
 
   const typedActivities = (activities || []) as unknown as TaskActivity[];
+
+  // Fetch active users for transfer dropdown
+  const { data: activeUsers } = await supabaseAdmin
+    .from('users')
+    .select('id, name')
+    .eq('is_active', true)
+    .order('name');
+
+  const transferUsers = (activeUsers || []).map((u) => ({ id: u.id as string, name: u.name as string }));
 
   const isOverdue =
     typedTask.due_date &&
@@ -193,6 +203,11 @@ export default async function TaskDetailPage({
               <p className="text-sm text-stone-900">
                 {typedTask.assigned_user?.name || 'Unassigned'}
               </p>
+              <TransferTask
+                taskId={typedTask.id}
+                currentAssignedTo={typedTask.assigned_to}
+                users={transferUsers}
+              />
             </div>
 
             <div>

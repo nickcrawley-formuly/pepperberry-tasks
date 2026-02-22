@@ -36,15 +36,25 @@ function isOverdue(task: Task): boolean {
 
 export default function TaskCard({ task }: { task: Task }) {
   const overdue = isOverdue(task);
+  const isUrgent = task.priority === 'urgent';
 
   return (
     <Link
       href={`/tasks/${task.id}`}
-      className="block bg-white rounded-xl border border-stone-200 p-5 hover:border-stone-300 transition"
+      className={`block rounded-xl border p-5 transition ${
+        isUrgent
+          ? 'bg-red-50 border-red-300 border-l-4 border-l-red-500 hover:border-red-400'
+          : 'bg-white border-stone-200 hover:border-stone-300'
+      }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-medium text-stone-900 leading-snug">
+            {isUrgent && (
+              <span className="inline-block bg-red-500 text-white text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded mr-1.5 align-middle">
+                Urgent
+              </span>
+            )}
             {task.title}
           </h3>
           {task.description && (
