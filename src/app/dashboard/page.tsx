@@ -56,14 +56,9 @@ export default async function DashboardPage() {
       <KeyboardShortcuts role={session.role} />
       <header className="bg-white border-b border-stone-200">
         <div className="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <img src="/PBLogo.png" alt="Pepperberry" className="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
-            <div>
-              <h1 className="text-base sm:text-lg font-medium text-stone-900">
-                🌿 Pepperberry Farm
-              </h1>
-              <p className="text-xs text-stone-500">Task Board</p>
-            </div>
+          <div className="flex items-center gap-2">
+            <img src="/PBLogo.png" alt="Pepperberry" className="w-9 h-9 sm:w-11 sm:h-11 object-contain" />
+            <p className="text-xs text-stone-500">Task Board</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
