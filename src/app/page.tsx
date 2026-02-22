@@ -124,12 +124,6 @@ export default function LoginPage() {
           <div className="space-y-6">
             {/* User Select */}
             <div>
-              <label
-                htmlFor="user"
-                className="block text-xs font-medium text-stone-400 mb-2 uppercase tracking-wider"
-              >
-                Who&apos;s signing in?
-              </label>
               <div className="relative">
                 <select
                   id="user"
