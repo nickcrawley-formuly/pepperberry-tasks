@@ -107,23 +107,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-stone-950 px-4">
       <div className="w-full max-w-sm">
-        {/* Header */}
+        {/* Logo */}
         <div className="text-center mb-8">
           <img
             src="/PBLogo_Transparent.png"
             alt="Pepperberry Farm"
-            className="w-28 h-28 mx-auto mb-4 object-contain"
+            className="w-40 mx-auto object-contain"
           />
-          <h1 className="text-3xl font-light tracking-tight text-stone-100">
-            Pepperberry Farm
-          </h1>
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <span className="h-px w-8 bg-stone-700" />
-            <p className="text-sm text-stone-500 tracking-widest uppercase">
-              Task Board
-            </p>
-            <span className="h-px w-8 bg-stone-700" />
-          </div>
         </div>
 
         {/* Login Form */}
