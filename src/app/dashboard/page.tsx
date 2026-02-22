@@ -38,11 +38,14 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-stone-50">
       <header className="bg-white border-b border-stone-200">
         <div className="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-medium text-stone-900">
-              Pepperberry
-            </h1>
-            <p className="text-xs text-stone-500">Task Board</p>
+          <div className="flex items-center gap-2.5">
+            <img src="/PBLogo.png" alt="Pepperberry" className="w-8 h-8 object-contain" />
+            <div>
+              <h1 className="text-lg font-medium text-stone-900">
+                Pepperberry
+              </h1>
+              <p className="text-xs text-stone-500">Task Board</p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <p className="text-sm font-medium text-stone-900">

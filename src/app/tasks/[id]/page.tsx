@@ -130,7 +130,8 @@ export default async function TaskDetailPage({
               <path d="m15 18-6-6 6-6" />
             </svg>
           </Link>
-          <div className="flex-1">
+          <div className="flex-1 flex items-center gap-2.5">
+            <img src="/PBLogo.png" alt="Pepperberry" className="w-7 h-7 object-contain" />
             <h1 className="text-lg font-medium text-stone-900">
               Task Detail
             </h1>
