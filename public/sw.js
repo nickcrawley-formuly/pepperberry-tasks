@@ -1,11 +1,11 @@
-var CACHE_NAME = 'pepperberry-v1';
+var CACHE_NAME = 'pepperberry-v2';
 var OFFLINE_URL = '/offline.html';
 
 // Pre-cache offline fallback page on install
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll([OFFLINE_URL, '/icon-192.png', '/icon-512.png']);
+      return cache.addAll([OFFLINE_URL, '/icon-192.png', '/icon-512.png', '/PBLogo.png']);
     })
   );
   self.skipWaiting();
