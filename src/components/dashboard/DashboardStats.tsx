@@ -46,10 +46,10 @@ export default function DashboardStats({ tasks }: DashboardStatsProps) {
   }
 
   const stats = [
-    { label: 'Open', value: openTasks.length, color: 'text-stone-100' },
-    { label: 'Overdue', value: overdue, color: overdue > 0 ? 'text-red-500' : 'text-stone-100' },
-    { label: 'Urgent / High', value: urgentHigh, color: urgentHigh > 0 ? 'text-orange-500' : 'text-stone-100' },
-    { label: 'Unassigned', value: unassigned, color: unassigned > 0 ? 'text-amber-400' : 'text-stone-100' },
+    { label: 'Open', value: openTasks.length, color: 'text-stone-900' },
+    { label: 'Overdue', value: overdue, color: overdue > 0 ? 'text-red-500' : 'text-stone-900' },
+    { label: 'Urgent / High', value: urgentHigh, color: urgentHigh > 0 ? 'text-orange-500' : 'text-stone-900' },
+    { label: 'Unassigned', value: unassigned, color: unassigned > 0 ? 'text-amber-600' : 'text-stone-900' },
   ];
 
   return (
@@ -59,7 +59,7 @@ export default function DashboardStats({ tasks }: DashboardStatsProps) {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="bg-stone-900 rounded-xl border border-stone-800 px-3 py-3 text-center"
+            className="bg-white rounded-xl border border-stone-200 px-3 py-3 text-center"
           >
             <p className={`text-2xl font-semibold ${s.color}`}>{s.value}</p>
             <p className="text-[11px] text-stone-500 mt-0.5">{s.label}</p>
@@ -69,16 +69,16 @@ export default function DashboardStats({ tasks }: DashboardStatsProps) {
 
       {/* Worker workload */}
       {workload.length > 0 && (
-        <div className="bg-stone-900 rounded-xl border border-stone-800 px-4 py-3">
-          <p className="text-xs font-medium text-stone-400 mb-2.5">Workload</p>
+        <div className="bg-white rounded-xl border border-stone-200 px-4 py-3">
+          <p className="text-xs font-medium text-stone-500 mb-2.5">Workload</p>
           <div className="flex flex-wrap gap-2">
             {workload.map((w) => (
               <span
                 key={w.name}
                 className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border ${
                   w.name === 'Unassigned'
-                    ? 'border-stone-700 text-stone-500 italic'
-                    : 'border-stone-700 text-stone-300'
+                    ? 'border-stone-200 text-stone-500 italic'
+                    : 'border-stone-200 text-stone-700'
                 }`}
               >
                 {w.name}

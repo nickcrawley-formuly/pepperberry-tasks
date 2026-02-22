@@ -171,7 +171,7 @@ function UserRow({
 
   return (
     <div
-      className={`bg-stone-900 rounded-xl border border-stone-700 p-4 ${
+      className={`bg-white rounded-xl border border-stone-200 p-4 ${
         !user.is_active ? 'opacity-50' : ''
       }`}
     >
@@ -180,16 +180,16 @@ function UserRow({
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
               user.role === 'admin'
-                ? 'bg-stone-600 text-white'
+                ? 'bg-stone-200 text-stone-700'
                 : user.role === 'tradesperson'
-                  ? 'bg-amber-900/40 text-amber-400'
-                  : 'bg-emerald-900/40 text-emerald-400'
+                  ? 'bg-amber-100 text-amber-700'
+                  : 'bg-emerald-100 text-emerald-700'
             }`}
           >
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="text-sm font-medium text-stone-100">{user.name}</p>
+            <p className="text-sm font-medium text-stone-900">{user.name}</p>
             <p className="text-xs text-stone-500">{roleLabel}</p>
           </div>
         </div>
@@ -197,14 +197,14 @@ function UserRow({
         <div className="flex items-center gap-3">
           <button
             onClick={onEdit}
-            className="px-3 py-1.5 rounded-lg border border-stone-700 text-xs font-medium text-stone-300 hover:bg-stone-800 transition"
+            className="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 hover:bg-stone-100 transition"
           >
             Edit
           </button>
           {!isSelf && (
             <button
               onClick={onDeleteClick}
-              className="px-3 py-1.5 rounded-lg border border-red-900/50 text-xs font-medium text-red-400 hover:bg-red-900/20 transition"
+              className="px-3 py-1.5 rounded-lg border border-red-200 text-xs font-medium text-red-600 hover:bg-red-50 transition"
             >
               Delete
             </button>
@@ -215,7 +215,7 @@ function UserRow({
             aria-checked={user.is_active}
             aria-label={user.is_active ? 'Deactivate user' : 'Activate user'}
             className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-              user.is_active ? 'bg-emerald-600' : 'bg-stone-700'
+              user.is_active ? 'bg-emerald-600' : 'bg-stone-300'
             }`}
           >
             <span
@@ -228,9 +228,9 @@ function UserRow({
       </div>
 
       {isDeleting && (
-        <div className="mt-3 pt-3 border-t border-stone-700">
-          <p className="text-xs text-stone-400 mb-2">
-            Delete <span className="text-stone-200 font-medium">{user.name}</span>? Their open tasks will be transferred to you.
+        <div className="mt-3 pt-3 border-t border-stone-200">
+          <p className="text-xs text-stone-500 mb-2">
+            Delete <span className="text-stone-900 font-medium">{user.name}</span>? Their open tasks will be transferred to you.
           </p>
           <div className="flex gap-2">
             <button
@@ -243,7 +243,7 @@ function UserRow({
             <button
               onClick={onDeleteCancel}
               disabled={deleteLoading}
-              className="px-3 py-1.5 rounded-lg border border-stone-700 text-xs font-medium text-stone-300 hover:bg-stone-800 transition"
+              className="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 hover:bg-stone-100 transition"
             >
               Cancel
             </button>
@@ -293,20 +293,20 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-900 bg-stone-50 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
   const selectClass =
-    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-900 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-stone-900 rounded-xl border border-stone-700 p-5 space-y-4"
+      className="bg-white rounded-xl border border-stone-200 p-5 space-y-4"
     >
-      <p className="text-sm font-medium text-stone-200">Add New User</p>
+      <p className="text-sm font-medium text-stone-900">Add New User</p>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-400 mb-1">Name *</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Name *</label>
           <input
             type="text"
             value={name}
@@ -317,7 +317,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-400 mb-1">PIN *</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">PIN *</label>
           <input
             type="text"
             inputMode="numeric"
@@ -333,7 +333,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-400 mb-1">Role *</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Role *</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -346,7 +346,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
         </div>
         {role === 'tradesperson' && (
           <div>
-            <label className="block text-xs font-medium text-stone-400 mb-1">Specialty</label>
+            <label className="block text-xs font-medium text-stone-500 mb-1">Specialty</label>
             <select
               value={tradeType}
               onChange={(e) => setTradeType(e.target.value)}
@@ -376,7 +376,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
         <button
           type="button"
           onClick={() => onDone(null)}
-          className="px-4 py-2 rounded-lg border border-stone-700 text-sm font-medium text-stone-300 hover:bg-stone-800 transition"
+          className="px-4 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-700 hover:bg-stone-100 transition"
         >
           Cancel
         </button>
@@ -445,20 +445,20 @@ function EditUserForm({
   }
 
   const inputClass =
-    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-900 bg-stone-50 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
   const selectClass =
-    'w-full rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-100 bg-stone-800 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition';
+    'w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-900 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition';
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-stone-900 rounded-xl border-2 border-stone-600 p-5 space-y-4"
+      className="bg-white rounded-xl border-2 border-stone-300 p-5 space-y-4"
     >
-      <p className="text-sm font-medium text-stone-200">Edit User</p>
+      <p className="text-sm font-medium text-stone-900">Edit User</p>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-400 mb-1">Name</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Name</label>
           <input
             type="text"
             value={name}
@@ -468,7 +468,7 @@ function EditUserForm({
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-stone-400 mb-1">
+          <label className="block text-xs font-medium text-stone-500 mb-1">
             Reset PIN <span className="text-stone-500 font-normal">(leave blank to keep)</span>
           </label>
           <input
@@ -485,7 +485,7 @@ function EditUserForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-stone-400 mb-1">Role</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Role</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -498,7 +498,7 @@ function EditUserForm({
         </div>
         {role === 'tradesperson' && (
           <div>
-            <label className="block text-xs font-medium text-stone-400 mb-1">Specialty</label>
+            <label className="block text-xs font-medium text-stone-500 mb-1">Specialty</label>
             <select
               value={tradeType}
               onChange={(e) => setTradeType(e.target.value)}
@@ -528,7 +528,7 @@ function EditUserForm({
         <button
           type="button"
           onClick={() => onDone(null)}
-          className="px-4 py-2 rounded-lg border border-stone-700 text-sm font-medium text-stone-300 hover:bg-stone-800 transition"
+          className="px-4 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-700 hover:bg-stone-100 transition"
         >
           Cancel
         </button>

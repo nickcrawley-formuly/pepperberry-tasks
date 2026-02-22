@@ -23,7 +23,7 @@ export default function OfflineIndicator() {
   if (!offline) return null;
 
   return (
-    <div className="bg-amber-900/80 text-amber-200 text-xs text-center py-1.5 px-4">
+    <div className="bg-amber-100 text-amber-800 text-xs text-center py-1.5 px-4">
       You&apos;re offline — viewing cached data
     </div>
   );

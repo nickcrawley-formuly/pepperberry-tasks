@@ -7,15 +7,15 @@ import { STATUS_LABELS } from '@/lib/constants';
 const STATUSES = ['todo', 'in_progress', 'done'] as const;
 
 const STATUS_STYLES: Record<string, string> = {
-  todo: 'border-stone-600 text-stone-300 hover:bg-stone-800',
-  in_progress: 'border-amber-700 text-amber-400 hover:bg-amber-900/30',
-  done: 'border-emerald-700 text-emerald-400 hover:bg-emerald-900/30',
+  todo: 'border-stone-200 text-stone-700 hover:bg-stone-100',
+  in_progress: 'border-amber-300 text-amber-600 hover:bg-amber-50',
+  done: 'border-emerald-300 text-emerald-600 hover:bg-emerald-50',
 };
 
 const ACTIVE_STYLES: Record<string, string> = {
-  todo: 'bg-stone-800 border-stone-600 text-stone-200',
-  in_progress: 'bg-amber-900/30 border-amber-600 text-amber-300',
-  done: 'bg-emerald-900/30 border-emerald-600 text-emerald-300',
+  todo: 'bg-stone-100 border-stone-300 text-stone-900',
+  in_progress: 'bg-amber-50 border-amber-500 text-amber-700',
+  done: 'bg-emerald-50 border-emerald-500 text-emerald-700',
 };
 
 interface StatusUpdaterProps {

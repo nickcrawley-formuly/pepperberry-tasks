@@ -37,7 +37,7 @@ export default function AdminFilters({
   }
 
   const selectClass =
-    'appearance-none rounded-lg border border-stone-700 bg-stone-800 pl-3 pr-7 py-2 text-xs text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50 transition min-w-0';
+    'appearance-none rounded-lg border border-stone-200 bg-stone-50 pl-3 pr-7 py-2 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50 transition min-w-0';
 
   const hasActiveFilters =
     filters.priority || filters.category || filters.location || filters.assignedTo;
@@ -125,7 +125,7 @@ export default function AdminFilters({
                 assignedTo: '',
               })
             }
-            className="shrink-0 text-xs text-stone-500 hover:text-stone-300 transition px-2 py-2"
+            className="shrink-0 text-xs text-stone-500 hover:text-stone-700 transition px-2 py-2"
           >
             Clear
           </button>

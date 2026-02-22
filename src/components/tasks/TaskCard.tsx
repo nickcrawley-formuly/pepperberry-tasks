@@ -8,14 +8,14 @@ import {
 } from '@/lib/constants';
 
 const STATUS_STYLES: Record<string, string> = {
-  todo: 'bg-stone-800 text-stone-300',
-  in_progress: 'bg-amber-900/30 text-amber-400',
-  done: 'bg-emerald-900/30 text-emerald-400',
+  todo: 'bg-stone-100 text-stone-700',
+  in_progress: 'bg-amber-50 text-amber-600',
+  done: 'bg-emerald-50 text-emerald-600',
 };
 
 const PRIORITY_STYLES: Record<string, string> = {
   low: 'text-stone-500',
-  medium: 'text-stone-300',
+  medium: 'text-stone-700',
   high: 'text-orange-500',
   urgent: 'text-red-500 font-semibold',
 };
@@ -40,11 +40,11 @@ export default function TaskCard({ task }: { task: Task }) {
   return (
     <Link
       href={`/tasks/${task.id}`}
-      className="block bg-stone-900 rounded-xl border border-stone-700 p-5 hover:border-stone-600 transition"
+      className="block bg-white rounded-xl border border-stone-200 p-5 hover:border-stone-300 transition"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium text-stone-100 leading-snug">
+          <h3 className="text-sm font-medium text-stone-900 leading-snug">
             {task.title}
           </h3>
           {task.description && (
@@ -74,7 +74,7 @@ export default function TaskCard({ task }: { task: Task }) {
         </span>
 
         {task.assigned_user?.name && (
-          <span className="text-stone-400">
+          <span className="text-stone-500">
             {task.assigned_user.name}
           </span>
         )}

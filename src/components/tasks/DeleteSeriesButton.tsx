@@ -33,7 +33,7 @@ export default function DeleteSeriesButton({ groupId }: { groupId: string }) {
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="px-3 py-1.5 rounded-lg border border-stone-700 text-xs font-medium text-stone-300 hover:bg-stone-800 transition"
+          className="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 hover:bg-stone-100 transition"
         >
           Cancel
         </button>
@@ -44,7 +44,7 @@ export default function DeleteSeriesButton({ groupId }: { groupId: string }) {
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="px-3 py-1.5 rounded-lg border border-red-700 text-xs font-medium text-red-500 hover:bg-red-900/30 transition"
+      className="px-3 py-1.5 rounded-lg border border-red-200 text-xs font-medium text-red-500 hover:bg-red-50 transition"
     >
       Delete Series
     </button>

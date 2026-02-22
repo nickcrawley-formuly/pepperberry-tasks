@@ -25,7 +25,7 @@ export default function ActivityLog({ activities }: ActivityLogProps) {
   if (activities.length === 0) {
     return (
       <div>
-        <p className="text-xs font-medium text-stone-400 mb-3">Activity</p>
+        <p className="text-xs font-medium text-stone-500 mb-3">Activity</p>
         <p className="text-xs text-stone-500">No activity recorded</p>
       </div>
     );
@@ -33,7 +33,7 @@ export default function ActivityLog({ activities }: ActivityLogProps) {
 
   return (
     <div>
-      <p className="text-xs font-medium text-stone-400 mb-3">Activity</p>
+      <p className="text-xs font-medium text-stone-500 mb-3">Activity</p>
       <div className="space-y-3">
         {activities.map((a) => (
           <div key={a.id} className="flex gap-3">
@@ -48,14 +48,14 @@ export default function ActivityLog({ activities }: ActivityLogProps) {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-stone-600"
+                className="text-stone-400"
               >
                 <path d={ACTION_ICONS[a.action] || ACTION_ICONS.edited} />
               </svg>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-stone-300">{a.detail}</p>
-              <p className="text-[11px] text-stone-600 mt-0.5">
+              <p className="text-sm text-stone-700">{a.detail}</p>
+              <p className="text-[11px] text-stone-400 mt-0.5">
                 {a.user?.name || 'Unknown'} &middot; {formatTime(a.created_at)}
               </p>
             </div>

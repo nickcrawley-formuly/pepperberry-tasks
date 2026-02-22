@@ -72,8 +72,8 @@ export default function PushNotificationPrompt() {
       disabled={loading}
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition ${
         subscribed
-          ? 'border-emerald-700 text-emerald-400 hover:bg-emerald-900/30'
-          : 'border-amber-700 text-amber-400 hover:bg-amber-900/30'
+          ? 'border-emerald-300 text-emerald-600 hover:bg-emerald-50'
+          : 'border-amber-300 text-amber-600 hover:bg-amber-50'
       } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       <svg

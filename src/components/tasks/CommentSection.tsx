@@ -55,7 +55,7 @@ export default function CommentSection({ taskId, comments: initialComments }: Co
 
   return (
     <div>
-      <h3 className="text-sm font-medium text-stone-200 mb-3">
+      <h3 className="text-sm font-medium text-stone-900 mb-3">
         Comments
         {comments.length > 0 && (
           <span className="ml-1.5 text-stone-500 font-normal">
@@ -69,17 +69,17 @@ export default function CommentSection({ taskId, comments: initialComments }: Co
           {comments.map((comment) => (
             <div
               key={comment.id}
-              className="bg-stone-800 rounded-lg px-4 py-3"
+              className="bg-stone-50 rounded-lg px-4 py-3"
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-medium text-stone-300">
+                <span className="text-xs font-medium text-stone-700">
                   {comment.user?.name || 'Unknown'}
                 </span>
                 <span className="text-[11px] text-stone-500">
                   {timeAgo(comment.created_at)}
                 </span>
               </div>
-              <p className="text-sm text-stone-200 leading-relaxed">
+              <p className="text-sm text-stone-900 leading-relaxed">
                 {comment.content}
               </p>
             </div>
@@ -95,7 +95,7 @@ export default function CommentSection({ taskId, comments: initialComments }: Co
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Add a comment..."
-          className="flex-1 rounded-lg border border-stone-700 bg-stone-800 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-600 focus:border-transparent transition"
+          className="flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300 focus:border-transparent transition"
         />
         <button
           type="submit"
