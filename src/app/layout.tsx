@@ -4,6 +4,7 @@ import "./globals.css";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import SessionGuard from "@/components/SessionGuard";
+import NavigationProgress from "@/components/NavigationProgress";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <ServiceWorkerRegistration />
         <OfflineIndicator />
         <SessionGuard />
+        <NavigationProgress />
         {children}
       </body>
     </html>
