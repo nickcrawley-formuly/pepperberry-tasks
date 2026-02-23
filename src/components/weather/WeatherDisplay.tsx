@@ -89,6 +89,7 @@ function WeatherIcon({ type, size = 24 }: { type: string; size?: number }) {
 
 export default function WeatherDisplay({ data }: WeatherDisplayProps) {
   const [selectedBar, setSelectedBar] = useState<number | null>(null);
+  const [radarActive, setRadarActive] = useState(false);
 
   const { current, daily, lastYearDaily, monthlyComparison } = data;
 
@@ -142,14 +143,9 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
       <div className="bg-white rounded-xl border border-stone-200 p-5">
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-3">
-              <span className={`text-4xl font-semibold ${current.temperature >= 30 ? 'text-red-600' : 'text-stone-900'}`}>
-                {Math.round(current.temperature)}°
-              </span>
-              <span className="text-stone-400">
-                <WeatherIcon type={current.condition.icon} size={32} />
-              </span>
-            </div>
+            <span className={`text-4xl font-semibold ${current.temperature >= 30 ? 'text-red-600' : 'text-stone-900'}`}>
+              {Math.round(current.temperature)}°
+            </span>
             <p className="text-sm text-stone-500 mt-1">{current.condition.description}</p>
             <p className="text-xs text-stone-400 mt-0.5">{getWeatherSummary(current.temperature, current.windSpeed, current.humidity, current.condition.description)}</p>
           </div>
@@ -371,14 +367,28 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
       {/* Rain Radar */}
       <div className="bg-white rounded-xl border border-stone-200 p-5">
         <p className="text-xs font-medium text-stone-500 mb-3">Rain Radar — Wollongong</p>
-        <div className="relative w-full overflow-hidden rounded-lg bg-stone-100" style={{ aspectRatio: '4 / 3' }}>
-          <iframe
-            src="https://embed.windy.com/embed2.html?lat=-34.42&lon=150.87&detailLat=-34.42&detailLon=150.87&width=650&height=450&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
-            title="Rain radar Wollongong"
-            className="absolute inset-0 w-full h-full border-0"
-            loading="lazy"
-            allowFullScreen
-          />
+        <div
+          className="relative w-full overflow-hidden rounded-lg bg-stone-100 cursor-pointer"
+          style={{ aspectRatio: '4 / 3' }}
+          onMouseEnter={() => setRadarActive(true)}
+          onTouchStart={() => setRadarActive(true)}
+        >
+          {radarActive ? (
+            <iframe
+              src="https://embed.windy.com/embed2.html?lat=-34.42&lon=150.87&detailLat=-34.42&detailLon=150.87&width=650&height=450&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
+              title="Rain radar Wollongong"
+              className="absolute inset-0 w-full h-full border-0"
+              allowFullScreen
+            />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-stone-400">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
+              </svg>
+              <p className="text-xs mt-2">Tap to load radar</p>
+            </div>
+          )}
         </div>
         <p className="text-[10px] text-stone-300 mt-2">
           Source: Windy.com / BOM
