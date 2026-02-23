@@ -1,0 +1,76 @@
+import { getSession } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { fetchWeatherData } from '@/lib/weather';
+import WeatherDisplay from '@/components/weather/WeatherDisplay';
+
+export default async function WeatherPage() {
+  const session = await getSession();
+  if (!session) redirect('/');
+
+  let weather;
+  let error = false;
+
+  try {
+    weather = await fetchWeatherData();
+  } catch {
+    error = true;
+  }
+
+  return (
+    <div className="min-h-screen bg-stone-100">
+      <header className="bg-white border-b border-stone-200 sticky top-0 z-30">
+        <div className="max-w-2xl mx-auto px-5 py-4 flex items-center gap-4">
+          <Link
+            href="/dashboard"
+            className="text-stone-500 hover:text-stone-700 transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </Link>
+          <div className="flex items-center gap-2.5">
+            <Link href="/dashboard">
+              <img src="/PBLogo.png" alt="Pepperberry" className="w-7 h-7 object-contain" />
+            </Link>
+            <h1 className="text-lg font-medium text-stone-900">Weather</h1>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-2xl mx-auto px-5 py-6">
+        {error || !weather ? (
+          <div className="bg-white rounded-xl border border-stone-200 p-8 text-center">
+            <svg
+              className="w-12 h-12 mx-auto text-stone-300 mb-3"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+              />
+            </svg>
+            <p className="text-sm font-medium text-stone-700 mb-1">Weather data unavailable</p>
+            <p className="text-xs text-stone-400">Please try again later.</p>
+          </div>
+        ) : (
+          <WeatherDisplay data={weather} />
+        )}
+      </main>
+    </div>
+  );
+}
