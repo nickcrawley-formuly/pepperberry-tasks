@@ -198,9 +198,9 @@ function UserRow({
 
   return (
     <div
-      className={`bg-white rounded-xl border border-stone-200 p-4 ${
-        !user.is_active ? 'opacity-50' : ''
-      }`}
+      className={`bg-white rounded-xl border p-4 ${
+        isSelf ? 'border-emerald-400 border-2' : 'border-stone-200'
+      } ${!user.is_active ? 'opacity-50' : ''}`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
