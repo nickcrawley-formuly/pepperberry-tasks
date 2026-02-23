@@ -18,9 +18,9 @@ export default function ServiceWorkerRegistration() {
       const unregisterAll = registrations.map((r) => r.unregister());
       return Promise.all(unregisterAll);
     }).then(() => {
-      return navigator.serviceWorker.register('/sw.js');
+      // Version param forces browser to see this as a new SW
+      return navigator.serviceWorker.register('/sw.js?v=5');
     }).then((registration) => {
-      // Force check for updated sw.js
       registration.update();
     }).catch((err) => {
       console.error('SW registration failed:', err);
