@@ -48,6 +48,12 @@ export interface DailyWeather {
   isForecast: boolean;
 }
 
+export interface MonthlyRainfall {
+  month: string; // "Jan", "Feb", etc.
+  thisYear: number;
+  lastYear: number;
+}
+
 export interface WeatherData {
   current: {
     temperature: number;
@@ -58,6 +64,10 @@ export interface WeatherData {
     precipitation: number;
   };
   daily: DailyWeather[];
+  lastYearDaily: { date: string; precipitationSum: number }[];
+  ytdThisYear: number;
+  ytdLastYear: number;
+  monthlyComparison: MonthlyRainfall[];
   fetchedAt: string;
 }
 
@@ -78,19 +88,64 @@ interface OpenMeteoResponse {
   };
 }
 
+interface ArchiveResponse {
+  daily: {
+    time: string[];
+    precipitation_sum: number[];
+  };
+}
+
+function dateShift(dateStr: string, years: number): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setFullYear(d.getFullYear() + years);
+  return d.toISOString().slice(0, 10);
+}
+
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export async function fetchWeatherData(): Promise<WeatherData> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum,temperature_2m_max,temperature_2m_min,weather_code&past_days=30&forecast_days=7&timezone=${TIMEZONE}&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,precipitation`;
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: TIMEZONE });
+  const currentYear = parseInt(today.slice(0, 4));
+  const lastYear = currentYear - 1;
 
-  const res = await fetch(url, { next: { revalidate: 3600 } });
+  // Current forecast + 30 days history
+  const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum,temperature_2m_max,temperature_2m_min,weather_code&past_days=30&forecast_days=7&timezone=${TIMEZONE}&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,precipitation`;
 
-  if (!res.ok) {
-    throw new Error(`Open-Meteo API error: ${res.status}`);
+  // Last year same 30-day window
+  const lyStart = dateShift(today, -1).replace(/\d{2}$/, (d) => {
+    const shifted = parseInt(d) - 30;
+    return shifted > 0 ? String(shifted).padStart(2, '0') : d;
+  });
+  // Compute properly: 30 days before the same date last year
+  const todayDate = new Date(today + 'T00:00:00');
+  const ly30Start = new Date(todayDate);
+  ly30Start.setFullYear(ly30Start.getFullYear() - 1);
+  ly30Start.setDate(ly30Start.getDate() - 30);
+  const ly30End = new Date(todayDate);
+  ly30End.setFullYear(ly30End.getFullYear() - 1);
+  const lastYear30Url = `https://archive-api.open-meteo.com/v1/archive?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum&start_date=${ly30Start.toISOString().slice(0, 10)}&end_date=${ly30End.toISOString().slice(0, 10)}&timezone=${TIMEZONE}`;
+
+  // YTD this year: Jan 1 to yesterday (archive needs past dates)
+  const yesterday = new Date(todayDate);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const ytdThisYearUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum&start_date=${currentYear}-01-01&end_date=${yesterday.toISOString().slice(0, 10)}&timezone=${TIMEZONE}`;
+
+  // YTD last year: Jan 1 to same day last year
+  const ytdLastYearUrl = `https://archive-api.open-meteo.com/v1/archive?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum&start_date=${lastYear}-01-01&end_date=${ly30End.toISOString().slice(0, 10)}&timezone=${TIMEZONE}`;
+
+  // Fetch all in parallel
+  const [forecastRes, ly30Res, ytdThisRes, ytdLastRes] = await Promise.all([
+    fetch(forecastUrl, { next: { revalidate: 3600 } }),
+    fetch(lastYear30Url, { next: { revalidate: 86400 } }),
+    fetch(ytdThisYearUrl, { next: { revalidate: 3600 } }),
+    fetch(ytdLastYearUrl, { next: { revalidate: 86400 } }),
+  ]);
+
+  if (!forecastRes.ok) {
+    throw new Error(`Open-Meteo API error: ${forecastRes.status}`);
   }
 
-  const raw: OpenMeteoResponse = await res.json();
-
-  // Today's date in AEST
-  const today = new Date().toLocaleDateString('en-CA', { timeZone: TIMEZONE });
+  const raw: OpenMeteoResponse = await forecastRes.json();
 
   const daily: DailyWeather[] = raw.daily.time.map((date, i) => ({
     date,
@@ -102,6 +157,53 @@ export async function fetchWeatherData(): Promise<WeatherData> {
     isForecast: date > today,
   }));
 
+  // Last year 30-day rainfall
+  let lastYearDaily: { date: string; precipitationSum: number }[] = [];
+  if (ly30Res.ok) {
+    const lyRaw: ArchiveResponse = await ly30Res.json();
+    lastYearDaily = lyRaw.daily.time.map((date, i) => ({
+      date,
+      precipitationSum: lyRaw.daily.precipitation_sum[i] ?? 0,
+    }));
+  }
+
+  // YTD totals and monthly breakdown
+  let ytdThisYear = 0;
+  let ytdLastYear = 0;
+  const monthlyThis: number[] = new Array(12).fill(0);
+  const monthlyLast: number[] = new Array(12).fill(0);
+
+  if (ytdThisRes.ok) {
+    const ytdThis: ArchiveResponse = await ytdThisRes.json();
+    ytdThis.daily.time.forEach((date, i) => {
+      const precip = ytdThis.daily.precipitation_sum[i] ?? 0;
+      ytdThisYear += precip;
+      const month = parseInt(date.slice(5, 7)) - 1;
+      monthlyThis[month] += precip;
+    });
+  }
+
+  if (ytdLastRes.ok) {
+    const ytdLast: ArchiveResponse = await ytdLastRes.json();
+    ytdLast.daily.time.forEach((date, i) => {
+      const precip = ytdLast.daily.precipitation_sum[i] ?? 0;
+      ytdLastYear += precip;
+      const month = parseInt(date.slice(5, 7)) - 1;
+      monthlyLast[month] += precip;
+    });
+  }
+
+  // Build monthly comparison up to current month
+  const currentMonth = parseInt(today.slice(5, 7)) - 1;
+  const monthlyComparison: MonthlyRainfall[] = [];
+  for (let m = 0; m <= currentMonth; m++) {
+    monthlyComparison.push({
+      month: MONTH_NAMES[m],
+      thisYear: Math.round(monthlyThis[m] * 10) / 10,
+      lastYear: Math.round(monthlyLast[m] * 10) / 10,
+    });
+  }
+
   return {
     current: {
       temperature: raw.current.temperature_2m,
@@ -112,6 +214,10 @@ export async function fetchWeatherData(): Promise<WeatherData> {
       precipitation: raw.current.precipitation,
     },
     daily,
+    lastYearDaily,
+    ytdThisYear: Math.round(ytdThisYear * 10) / 10,
+    ytdLastYear: Math.round(ytdLastYear * 10) / 10,
+    monthlyComparison,
     fetchedAt: new Date().toISOString(),
   };
 }

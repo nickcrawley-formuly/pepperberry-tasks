@@ -90,19 +90,33 @@ function WeatherIcon({ type, size = 24 }: { type: string; size?: number }) {
 export default function WeatherDisplay({ data }: WeatherDisplayProps) {
   const [selectedBar, setSelectedBar] = useState<number | null>(null);
 
-  const { current, daily } = data;
+  const { current, daily, lastYearDaily, monthlyComparison } = data;
 
-  // Rainfall chart data
-  const maxPrecip = Math.max(...daily.map((d) => d.precipitationSum), 1);
-  const totalRainfall30 = daily
-    .filter((d) => !d.isForecast)
+  // Rainfall chart: combine this year + last year for scaling
+  const historicalDays = daily.filter((d) => !d.isForecast);
+  const allPrecipValues = [
+    ...daily.map((d) => d.precipitationSum),
+    ...lastYearDaily.map((d) => d.precipitationSum),
+  ];
+  const maxPrecip = Math.max(...allPrecipValues, 1);
+  const totalRainfall30 = historicalDays.reduce((sum, d) => sum + d.precipitationSum, 0);
+  const totalRainfallLastYear30 = lastYearDaily
+    .slice(-historicalDays.length)
     .reduce((sum, d) => sum + d.precipitationSum, 0);
 
   // 7-day forecast (future days only)
   const forecast = daily.filter((d) => d.isForecast);
 
   // Today entry
-  const today = daily.find((d) => !d.isForecast && d === daily.filter((dd) => !dd.isForecast).at(-1));
+  const today = historicalDays.at(-1);
+
+  // YTD comparison chart
+  const currentYear = new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' }).slice(0, 4);
+  const lastYearLabel = String(parseInt(currentYear) - 1);
+  const maxMonthly = Math.max(
+    ...monthlyComparison.map((m) => Math.max(m.thisYear, m.lastYear)),
+    1
+  );
 
   return (
     <div className="space-y-4">
@@ -157,9 +171,14 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
       <div className="bg-white rounded-xl border border-stone-200 p-5">
         <div className="flex items-baseline justify-between mb-1">
           <p className="text-xs font-medium text-stone-500">Rainfall</p>
-          <p className="text-xs text-stone-400">
-            30-day total: <span className="font-medium text-stone-600">{totalRainfall30.toFixed(1)} mm</span>
-          </p>
+          <div className="text-xs text-stone-400 text-right">
+            <span>30-day: <span className="font-medium text-stone-600">{totalRainfall30.toFixed(1)} mm</span></span>
+            {totalRainfallLastYear30 > 0 && (
+              <span className="ml-2 text-stone-300">
+                (last yr: {totalRainfallLastYear30.toFixed(1)} mm)
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Bar chart */}
@@ -169,7 +188,14 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
               const height = day.precipitationSum > 0
                 ? Math.max((day.precipitationSum / maxPrecip) * 100, 4)
                 : 0;
-              const isToday = !day.isForecast && i === daily.filter((d) => !d.isForecast).length - 1;
+              const isToday = !day.isForecast && i === historicalDays.length - 1;
+
+              // Last year comparison bar (aligned by position)
+              const lyIndex = i < lastYearDaily.length ? i : -1;
+              const lyPrecip = lyIndex >= 0 ? lastYearDaily[lyIndex].precipitationSum : 0;
+              const lyHeight = lyPrecip > 0
+                ? Math.max((lyPrecip / maxPrecip) * 100, 4)
+                : 0;
 
               return (
                 <button
@@ -183,12 +209,20 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
                   {selectedBar === i && (
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-stone-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
                       {formatDateShort(day.date)}: {day.precipitationSum.toFixed(1)} mm
+                      {lyPrecip > 0 && ` (LY: ${lyPrecip.toFixed(1)})`}
                     </div>
                   )}
-                  {/* Bar */}
+                  {/* Last year bar (faint, behind) */}
+                  {lyHeight > 0 && (
+                    <div
+                      className="absolute bottom-0 w-full rounded-t bg-sky-200/40"
+                      style={{ height: `${lyHeight}%`, minHeight: 3 }}
+                    />
+                  )}
+                  {/* Current year bar */}
                   {height > 0 && (
                     <div
-                      className={`w-full rounded-t transition-colors ${
+                      className={`w-full rounded-t transition-colors relative ${
                         isToday
                           ? 'bg-sky-500'
                           : day.isForecast
@@ -207,7 +241,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
           <div className="flex mt-1.5" style={{ minWidth: '100%' }}>
             {daily.map((day, i) => {
               const showLabel = i === 0 || i === daily.length - 1 || i % 7 === 0 ||
-                (!day.isForecast && i === daily.filter((d) => !d.isForecast).length - 1);
+                (!day.isForecast && i === historicalDays.length - 1);
               return (
                 <div key={day.date} className="flex-1 text-center">
                   {showLabel && (
@@ -222,7 +256,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 mt-3 text-[10px] text-stone-400">
+        <div className="flex items-center gap-3 mt-3 text-[10px] text-stone-400 flex-wrap">
           <div className="flex items-center gap-1">
             <div className="w-2.5 h-2.5 rounded-sm bg-sky-600" />
             <span>Recorded</span>
@@ -235,8 +269,76 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
             <div className="w-2.5 h-2.5 rounded-sm bg-sky-300" />
             <span>Forecast</span>
           </div>
+          <div className="flex items-center gap-1">
+            <div className="w-2.5 h-2.5 rounded-sm bg-sky-200/40 border border-sky-200" />
+            <span>Last year</span>
+          </div>
         </div>
       </div>
+
+      {/* Year-to-Date Comparison */}
+      {monthlyComparison.length > 0 && (
+        <div className="bg-white rounded-xl border border-stone-200 p-5">
+          <div className="flex items-baseline justify-between mb-1">
+            <p className="text-xs font-medium text-stone-500">Rainfall Year-to-Date</p>
+            <div className="text-xs text-stone-400 text-right">
+              <span className="font-medium text-sky-600">{data.ytdThisYear} mm</span>
+              <span className="mx-1 text-stone-300">vs</span>
+              <span className="text-stone-400">{data.ytdLastYear} mm</span>
+            </div>
+          </div>
+
+          {/* Monthly bar chart */}
+          <div className="mt-3">
+            <div className="flex items-end gap-2" style={{ height: 100 }}>
+              {monthlyComparison.map((m) => (
+                <div key={m.month} className="flex-1 flex flex-col items-center justify-end" style={{ height: '100%' }}>
+                  <div className="w-full flex gap-px justify-center items-end" style={{ height: '100%' }}>
+                    {/* Last year bar */}
+                    <div className="flex-1 flex flex-col justify-end h-full">
+                      {m.lastYear > 0 && (
+                        <div
+                          className="w-full rounded-t bg-stone-200"
+                          style={{ height: `${Math.max((m.lastYear / maxMonthly) * 100, 4)}%`, minHeight: 3 }}
+                        />
+                      )}
+                    </div>
+                    {/* This year bar */}
+                    <div className="flex-1 flex flex-col justify-end h-full">
+                      {m.thisYear > 0 && (
+                        <div
+                          className="w-full rounded-t bg-sky-500"
+                          style={{ height: `${Math.max((m.thisYear / maxMonthly) * 100, 4)}%`, minHeight: 3 }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Month labels */}
+            <div className="flex gap-2 mt-1.5">
+              {monthlyComparison.map((m) => (
+                <div key={m.month} className="flex-1 text-center">
+                  <span className="text-[9px] text-stone-400">{m.month}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center gap-4 mt-3 text-[10px] text-stone-400">
+            <div className="flex items-center gap-1">
+              <div className="w-2.5 h-2.5 rounded-sm bg-sky-500" />
+              <span>{currentYear}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2.5 h-2.5 rounded-sm bg-stone-200" />
+              <span>{lastYearLabel}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 7-Day Forecast */}
       <div className="bg-white rounded-xl border border-stone-200 p-5">
