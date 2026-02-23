@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { WeatherData, DailyWeather } from '@/lib/weather';
+import { WeatherData } from '@/lib/weather';
 
 interface WeatherDisplayProps {
   data: WeatherData;
