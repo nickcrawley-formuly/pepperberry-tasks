@@ -1,4 +1,4 @@
-var CACHE_NAME = 'pepperberry-v2';
+var CACHE_NAME = 'pepperberry-v3';
 var OFFLINE_URL = '/offline.html';
 
 // Pre-cache offline fallback page on install
@@ -58,6 +58,9 @@ self.addEventListener('fetch', function (event) {
     );
     return;
   }
+
+  // Auth API: always network, never cache (user list changes)
+  if (url.pathname === '/api/auth/users') return;
 
   // API GET requests: network-first with cache fallback
   if (url.pathname.startsWith('/api/')) {
