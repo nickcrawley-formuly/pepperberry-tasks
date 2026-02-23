@@ -29,7 +29,7 @@ function LoginForm() {
   const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    fetch('/api/auth/users')
+    fetch('/api/auth/users?_t=' + Date.now())
       .then((res) => res.json())
       .then((data) => {
         setUsers(data.users || []);
