@@ -78,11 +78,12 @@ export async function POST(request: NextRequest) {
   // Successful login — clear failures
   failedAttempts.delete(ip);
 
-  // Record last login time
-  await supabaseAdmin
-    .from('users')
-    .update({ last_login: new Date().toISOString() })
-    .eq('id', user.id);
+  // Record last login time + login history
+  const loginTime = new Date().toISOString();
+  await Promise.all([
+    supabaseAdmin.from('users').update({ last_login: loginTime }).eq('id', user.id),
+    supabaseAdmin.from('login_history').insert({ user_id: user.id, logged_in_at: loginTime }),
+  ]);
 
   // Notify Nick when someone logs in (don't block on it)
   notifyNickOfLogin(user.name).catch(() => {});

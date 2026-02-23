@@ -9,10 +9,31 @@ export default async function AdminUsersPage() {
   if (!session) redirect('/');
   if (session.role !== 'admin') redirect('/dashboard');
 
-  const { data: rawUsers } = await supabaseAdmin
-    .from('users')
-    .select('id, name, role, trade_type, is_active, created_at, last_login, phone, allowed_sections')
-    .order('name', { ascending: true });
+  // Fetch users and login history (last 14 days) in parallel
+  const fourteenDaysAgo = new Date();
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+  const [{ data: rawUsers }, { data: loginData }] = await Promise.all([
+    supabaseAdmin
+      .from('users')
+      .select('id, name, role, trade_type, is_active, created_at, last_login, phone, allowed_sections')
+      .order('name', { ascending: true }),
+    supabaseAdmin
+      .from('login_history')
+      .select('user_id, logged_in_at')
+      .gte('logged_in_at', fourteenDaysAgo.toISOString())
+      .order('logged_in_at', { ascending: false }),
+  ]);
+
+  // Group login dates by user (as YYYY-MM-DD strings in AEST)
+  const loginsByUser: Record<string, string[]> = {};
+  (loginData || []).forEach((entry: { user_id: string; logged_in_at: string }) => {
+    const dateStr = new Date(entry.logged_in_at).toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' });
+    if (!loginsByUser[entry.user_id]) loginsByUser[entry.user_id] = [];
+    if (!loginsByUser[entry.user_id].includes(dateStr)) {
+      loginsByUser[entry.user_id].push(dateStr);
+    }
+  });
 
   const users = (rawUsers || []).sort((a, b) => {
     if (a.role === 'admin' && b.role !== 'admin') return -1;
@@ -52,7 +73,7 @@ export default async function AdminUsersPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
-        <UserManagement initialUsers={users || []} currentUserId={session.userId} />
+        <UserManagement initialUsers={users || []} currentUserId={session.userId} loginsByUser={loginsByUser} />
       </main>
     </div>
   );

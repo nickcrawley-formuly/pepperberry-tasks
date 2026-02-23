@@ -40,9 +40,10 @@ interface User {
 interface UserManagementProps {
   initialUsers: User[];
   currentUserId: string;
+  loginsByUser: Record<string, string[]>;
 }
 
-export default function UserManagement({ initialUsers, currentUserId }: UserManagementProps) {
+export default function UserManagement({ initialUsers, currentUserId, loginsByUser }: UserManagementProps) {
   const router = useRouter();
   const [users, setUsers] = useState(initialUsers);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -107,6 +108,7 @@ export default function UserManagement({ initialUsers, currentUserId }: UserMana
                 isSelf={user.id === currentUserId}
                 isDeleting={deletingId === user.id}
                 deleteLoading={deleteLoading}
+                loginDates={loginsByUser[user.id] || []}
                 onEdit={() => setEditingId(user.id)}
                 onToggleActive={async () => {
                   const res = await fetch(`/api/users/${user.id}`, {
@@ -179,6 +181,7 @@ function UserRow({
   isSelf,
   isDeleting,
   deleteLoading,
+  loginDates,
   onEdit,
   onToggleActive,
   onDeleteClick,
@@ -189,6 +192,7 @@ function UserRow({
   isSelf: boolean;
   isDeleting: boolean;
   deleteLoading: boolean;
+  loginDates: string[];
   onEdit: () => void;
   onToggleActive: () => void;
   onDeleteClick: () => void;
@@ -290,6 +294,9 @@ function UserRow({
         </div>
       </div>
 
+      {/* 14-day login history */}
+      <LoginHistory loginDates={loginDates} />
+
       {isDeleting && (
         <div className="mt-3 pt-3 border-t border-stone-200">
           <p className="text-xs text-stone-500 mb-2">
@@ -313,6 +320,42 @@ function UserRow({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function LoginHistory({ loginDates }: { loginDates: string[] }) {
+  // Build array of last 14 days (oldest first)
+  const days: { date: string; label: string; active: boolean }[] = [];
+  const today = new Date();
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' });
+    const dayLabel = d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', timeZone: 'Australia/Sydney' });
+    days.push({
+      date: dateStr,
+      label: dayLabel,
+      active: loginDates.includes(dateStr),
+    });
+  }
+
+  return (
+    <div className="mt-2 pt-2 border-t border-stone-100">
+      <div className="flex items-center gap-1">
+        <span className="text-[9px] text-stone-300 w-6 shrink-0">14d</span>
+        <div className="flex gap-0.5 flex-1">
+          {days.map((day) => (
+            <div
+              key={day.date}
+              title={day.label}
+              className={`flex-1 h-2.5 rounded-sm ${
+                day.active ? 'bg-emerald-500' : 'bg-stone-100'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
