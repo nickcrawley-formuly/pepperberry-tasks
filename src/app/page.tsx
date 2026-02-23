@@ -246,16 +246,16 @@ function LoginForm() {
                 </svg>
               </div>
             )}
+            {/* Footer info */}
+            <div className="flex items-center justify-center gap-1.5 pt-2">
+              <span className={`w-2 h-2 rounded-full ${secure ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+              <span className="text-[11px] text-stone-400">End-to-End Encryption</span>
+            </div>
+            <p className="text-center text-xs text-stone-500">
+              Sessions expire after 3 hours
+            </p>
           </div>
         </form>
-
-        <div className="flex items-center justify-center gap-1.5 mt-4">
-          <span className={`w-2 h-2 rounded-full ${secure ? 'bg-emerald-500' : 'bg-stone-400'}`} />
-          <span className="text-[11px] text-stone-400">End-to-End Encryption</span>
-        </div>
-        <p className="text-center text-xs text-stone-400 mt-2">
-          Sessions expire after 3 hours
-        </p>
       </div>
     </div>
   );
