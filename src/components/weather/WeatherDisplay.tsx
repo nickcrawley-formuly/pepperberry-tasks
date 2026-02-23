@@ -175,6 +175,12 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
             <span className="text-stone-400">Rain now</span>
             <p className="text-stone-700 font-medium">{current.precipitation} mm</p>
           </div>
+          {current.seaTemperature !== null && (
+            <div>
+              <span className="text-stone-400">Sea at Kiama</span>
+              <p className="text-stone-700 font-medium">{Math.round(current.seaTemperature)}°C</p>
+            </div>
+          )}
         </div>
         <p className="text-xs text-stone-300 mt-3">
           Updated {new Date(data.fetchedAt).toLocaleTimeString('en-AU', {

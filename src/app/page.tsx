@@ -52,6 +52,14 @@ function LoginForm() {
     if (value && index < 3) {
       pinRefs.current[index + 1]?.focus();
     }
+
+    // Auto-submit on 4th digit
+    if (value && index === 3 && next.every((d) => d !== '')) {
+      setTimeout(() => {
+        const form = pinRefs.current[0]?.closest('form');
+        form?.requestSubmit();
+      }, 100);
+    }
   }
 
   function handlePinKeyDown(index: number, e: React.KeyboardEvent) {
@@ -74,6 +82,14 @@ function LoginForm() {
 
     const focusIndex = Math.min(pasted.length, 3);
     pinRefs.current[focusIndex]?.focus();
+
+    // Auto-submit if full PIN pasted
+    if (pasted.length === 4) {
+      setTimeout(() => {
+        const form = pinRefs.current[0]?.closest('form');
+        form?.requestSubmit();
+      }, 100);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -111,8 +127,6 @@ function LoginForm() {
     }
   }
 
-  const fullPin = pin.join('');
-  const canSubmit = selectedUser && fullPin.length === 4 && !loading;
   const nextPinIndex = pin.findIndex((d) => d === '');
 
   return (
@@ -218,24 +232,15 @@ function LoginForm() {
               </div>
             )}
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className="w-full rounded-lg bg-amber-600 py-3 text-sm font-medium text-white hover:bg-amber-500 active:bg-amber-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <span className="inline-flex items-center gap-2">
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Signing in...
-                </span>
-              ) : (
-                'Sign In'
-              )}
-            </button>
+            {/* Loading indicator */}
+            {loading && (
+              <div className="flex justify-center">
+                <svg className="w-5 h-5 animate-spin text-amber-500" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              </div>
+            )}
           </div>
         </form>
 

@@ -62,6 +62,7 @@ export interface WeatherData {
     humidity: number;
     windSpeed: number;
     precipitation: number;
+    seaTemperature: number | null;
   };
   daily: DailyWeather[];
   lastYearDaily: { date: string; precipitationSum: number }[];
@@ -122,12 +123,16 @@ export async function fetchWeatherData(): Promise<WeatherData> {
   // YTD last year: Jan 1 to same day last year
   const ytdLastYearUrl = `https://archive-api.open-meteo.com/v1/archive?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum&start_date=${lastYear}-01-01&end_date=${ly30End.toISOString().slice(0, 10)}&timezone=${TIMEZONE}`;
 
+  // Sea temperature at Kiama
+  const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=-34.67&longitude=150.85&current=sea_surface_temperature`;
+
   // Fetch all in parallel
-  const [forecastRes, ly30Res, ytdThisRes, ytdLastRes] = await Promise.all([
+  const [forecastRes, ly30Res, ytdThisRes, ytdLastRes, marineRes] = await Promise.all([
     fetch(forecastUrl, { next: { revalidate: 3600 } }),
     fetch(lastYear30Url, { next: { revalidate: 86400 } }),
     fetch(ytdThisYearUrl, { next: { revalidate: 3600 } }),
     fetch(ytdLastYearUrl, { next: { revalidate: 86400 } }),
+    fetch(marineUrl, { next: { revalidate: 3600 } }),
   ]);
 
   if (!forecastRes.ok) {
@@ -135,6 +140,13 @@ export async function fetchWeatherData(): Promise<WeatherData> {
   }
 
   const raw: OpenMeteoResponse = await forecastRes.json();
+
+  // Parse sea temperature
+  let seaTemperature: number | null = null;
+  if (marineRes.ok) {
+    const marine = await marineRes.json();
+    seaTemperature = marine.current?.sea_surface_temperature ?? null;
+  }
 
   const daily: DailyWeather[] = raw.daily.time.map((date, i) => ({
     date,
@@ -201,6 +213,7 @@ export async function fetchWeatherData(): Promise<WeatherData> {
       humidity: raw.current.relative_humidity_2m,
       windSpeed: raw.current.wind_speed_10m,
       precipitation: raw.current.precipitation,
+      seaTemperature,
     },
     daily,
     lastYearDaily,
