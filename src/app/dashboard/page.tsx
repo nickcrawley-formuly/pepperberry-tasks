@@ -68,16 +68,13 @@ export default async function DashboardPage() {
             <LogoutButton />
           </div>
         </div>
-      </header>
-
-      <main className="max-w-2xl mx-auto px-5 py-6">
-        {/* Admin action bar */}
-        <div className="flex items-center gap-2 mb-5 flex-wrap">
+        {/* Navigation buttons */}
+        <div className="max-w-2xl mx-auto px-5 pb-3 flex items-center gap-2 flex-wrap">
           {session.role === 'admin' && (
             <>
               <Link
                 href="/tasks/new"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 active:bg-amber-700 transition"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 active:bg-amber-700 transition"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +94,7 @@ export default async function DashboardPage() {
               </Link>
               <Link
                 href="/admin/users"
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -120,8 +117,28 @@ export default async function DashboardPage() {
             </>
           )}
           <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+            </svg>
+            Tasks
+          </Link>
+          <Link
             href="/weather"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -139,6 +156,9 @@ export default async function DashboardPage() {
             Weather
           </Link>
         </div>
+      </header>
+
+      <main className="max-w-2xl mx-auto px-5 py-6">
 
         {/* Summary stats (admin only) */}
         {session.role === 'admin' && <DashboardStats tasks={tasks} />}
