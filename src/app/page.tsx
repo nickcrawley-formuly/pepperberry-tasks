@@ -62,10 +62,6 @@ function LoginForm() {
     }
   }
 
-  const [secure, setSecure] = useState(false);
-  useEffect(() => {
-    setSecure(window.location.protocol === 'https:');
-  }, []);
 
   function handlePinKeyDown(index: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !pin[index] && index > 0) {
@@ -164,6 +160,9 @@ function LoginForm() {
           className="bg-stone-900 rounded-2xl border border-stone-700 p-8 shadow-2xl shadow-black/40"
         >
           <div className="space-y-6">
+            {/* Private notice */}
+            <p className="text-center text-xs text-stone-500 tracking-wide uppercase">Private and Confidential</p>
+
             {/* User Select */}
             <div>
               <div className="relative">
@@ -172,14 +171,15 @@ function LoginForm() {
                   value={selectedUser}
                   onChange={(e) => {
                     setSelectedUser(e.target.value);
+                    setPin(['', '', '', '']);
                     setError('');
-                    if (e.target.value) pinRefs.current[0]?.focus();
+                    if (e.target.value) setTimeout(() => pinRefs.current[0]?.focus(), 50);
                   }}
                   disabled={usersLoading}
                   className="w-full appearance-none rounded-lg border border-stone-700 bg-stone-800 px-4 py-3 text-sm text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-600/50 focus:border-amber-600/50 transition disabled:opacity-50"
                 >
                   <option value="">
-                    {usersLoading ? 'Loading...' : 'Select your name'}
+                    {usersLoading ? 'Loading...' : 'Login as..'}
                   </option>
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>
@@ -201,30 +201,34 @@ function LoginForm() {
               </div>
             </div>
 
-            {/* PIN Input */}
-            <div>
-              <div className="flex gap-3 justify-center">
-                {pin.map((digit, i) => (
-                  <input
-                    key={i}
-                    ref={(el) => { pinRefs.current[i] = el; }}
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handlePinChange(i, e.target.value)}
-                    onKeyDown={(e) => handlePinKeyDown(i, e)}
-                    onPaste={i === 0 ? handlePinPaste : undefined}
-                    aria-label={`PIN digit ${i + 1}`}
-                    className={`w-14 h-14 text-center text-xl rounded-lg border bg-stone-800 text-stone-100 focus:outline-none transition ${
-                      i === nextPinIndex
-                        ? 'border-emerald-400 ring-2 ring-emerald-400/50'
-                        : 'border-stone-700'
-                    }`}
-                  />
-                ))}
+            {/* PIN Input - only available after user selected */}
+            {selectedUser && (
+              <div>
+                <div className="flex gap-3 justify-center">
+                  {pin.map((digit, i) => (
+                    <input
+                      key={i}
+                      ref={(el) => { pinRefs.current[i] = el; }}
+                      type="password"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handlePinChange(i, e.target.value)}
+                      onKeyDown={(e) => handlePinKeyDown(i, e)}
+                      onPaste={i === 0 ? handlePinPaste : undefined}
+                      aria-label={`PIN digit ${i + 1}`}
+                      className={`w-14 h-14 text-center text-xl rounded-lg border bg-stone-800 text-stone-100 focus:outline-none transition ${
+                        i === nextPinIndex
+                          ? 'border-amber-500 ring-2 ring-amber-500/50'
+                          : digit
+                            ? 'border-stone-500'
+                            : 'border-stone-700'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Error */}
             {error && (
@@ -246,15 +250,7 @@ function LoginForm() {
                 </svg>
               </div>
             )}
-            {/* Footer info */}
-            <div className="flex items-center justify-center gap-1.5 pt-2">
-              <span className={`w-2 h-2 rounded-full ${secure ? 'bg-emerald-500' : 'bg-stone-400'}`} />
-              <span className="text-[11px] text-stone-400">End-to-End Encryption</span>
-            </div>
-            <p className="text-center text-xs text-stone-500">
-              Sessions expire after 3 hours
-            </p>
-            <p className="text-center text-[10px] text-stone-300 mt-2">velvet-basalt</p>
+            <p className="text-center text-[10px] text-stone-500 pt-2">velvet-basalt</p>
           </div>
         </form>
       </div>
