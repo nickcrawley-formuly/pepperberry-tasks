@@ -143,7 +143,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <span className="text-4xl font-semibold text-stone-900">
+              <span className={`text-4xl font-semibold ${current.temperature >= 30 ? 'text-red-600' : 'text-stone-900'}`}>
                 {Math.round(current.temperature)}°
               </span>
               <span className="text-stone-400">
@@ -151,6 +151,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
               </span>
             </div>
             <p className="text-sm text-stone-500 mt-1">{current.condition.description}</p>
+            <p className="text-xs text-stone-400 mt-0.5">{getWeatherSummary(current.temperature, current.windSpeed, current.humidity, current.condition.description)}</p>
           </div>
           {today && (
             <div className="text-right text-sm text-stone-500">
@@ -188,23 +189,6 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
             hour: 'numeric',
             minute: '2-digit',
           })}
-        </p>
-      </div>
-
-      {/* Rain Radar */}
-      <div className="bg-white rounded-xl border border-stone-200 p-5">
-        <p className="text-xs font-medium text-stone-500 mb-3">Rain Radar — Wollongong</p>
-        <div className="relative w-full overflow-hidden rounded-lg bg-stone-100" style={{ aspectRatio: '4 / 3' }}>
-          <iframe
-            src="https://embed.windy.com/embed2.html?lat=-34.42&lon=150.87&detailLat=-34.42&detailLon=150.87&width=650&height=450&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
-            title="Rain radar Wollongong"
-            className="absolute inset-0 w-full h-full border-0"
-            loading="lazy"
-            allowFullScreen
-          />
-        </div>
-        <p className="text-[10px] text-stone-300 mt-2">
-          Source: Windy.com / BOM
         </p>
       </div>
 
@@ -342,6 +326,23 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
         </div>
       </div>
 
+      {/* Rain Radar */}
+      <div className="bg-white rounded-xl border border-stone-200 p-5">
+        <p className="text-xs font-medium text-stone-500 mb-3">Rain Radar — Wollongong</p>
+        <div className="relative w-full overflow-hidden rounded-lg bg-stone-100" style={{ aspectRatio: '4 / 3' }}>
+          <iframe
+            src="https://embed.windy.com/embed2.html?lat=-34.42&lon=150.87&detailLat=-34.42&detailLon=150.87&width=650&height=450&zoom=8&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
+            title="Rain radar Wollongong"
+            className="absolute inset-0 w-full h-full border-0"
+            loading="lazy"
+            allowFullScreen
+          />
+        </div>
+        <p className="text-[10px] text-stone-300 mt-2">
+          Source: Windy.com / BOM
+        </p>
+      </div>
+
       {/* Year-to-Date Comparison */}
       <div className="bg-white rounded-xl border border-stone-200 p-5">
         <p className="text-xs font-medium text-stone-500 mb-3">Rainfall Year-to-Date</p>
@@ -435,4 +436,18 @@ function formatDateLabel(dateStr: string): string {
 function formatDayName(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('en-AU', { weekday: 'short' });
+}
+
+function getWeatherSummary(temp: number, wind: number, humidity: number, condition: string): string {
+  if (temp >= 35) return 'Extreme heat — stay hydrated and limit outdoor work.';
+  if (temp >= 30) return 'Hot conditions — take breaks in the shade.';
+  if (condition.toLowerCase().includes('thunder')) return 'Thunderstorms expected — avoid open paddocks.';
+  if (condition.toLowerCase().includes('heavy') || condition.toLowerCase().includes('violent')) return 'Heavy rain — muddy conditions likely across paddocks.';
+  if (condition.toLowerCase().includes('rain') || condition.toLowerCase().includes('shower')) return 'Wet weather — pack a jacket for outdoor work.';
+  if (condition.toLowerCase().includes('fog')) return 'Low visibility — take care on the driveway.';
+  if (wind >= 40) return 'Strong winds — secure loose items around the property.';
+  if (temp <= 5) return 'Cold morning — check water troughs for frost.';
+  if (humidity >= 85 && temp >= 25) return 'Warm and humid — drink plenty of water.';
+  if (condition.toLowerCase().includes('clear') || condition.toLowerCase().includes('sunny')) return 'Fine conditions — good day for outdoor work.';
+  return 'Mild conditions across the property.';
 }
