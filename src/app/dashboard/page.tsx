@@ -80,7 +80,7 @@ export default async function DashboardPage() {
               </Link>
               <Link
                 href="/admin/users"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 active:bg-amber-700 transition"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
           )}
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 active:bg-amber-700 transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +125,7 @@ export default async function DashboardPage() {
           {(session.role === 'admin' || session.allowedSections?.includes('weather')) && (
             <Link
               href="/weather"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 active:bg-amber-700 transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +146,7 @@ export default async function DashboardPage() {
           {(session.role === 'admin' || session.allowedSections?.includes('cart')) && (
             <Link
               href="/shopping"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 text-white text-sm font-medium hover:bg-amber-500 active:bg-amber-700 transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
