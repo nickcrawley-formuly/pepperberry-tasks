@@ -163,23 +163,48 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
             </div>
           )}
         </div>
-        <div className="flex gap-6 mt-4 text-xs text-stone-500">
-          <div>
-            <span className="text-stone-400">Humidity</span>
-            <p className="text-stone-700 font-medium">{current.humidity}%</p>
+        <div className="flex gap-5 mt-4 text-xs text-stone-500">
+          <div className="flex items-center gap-1.5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-400 shrink-0">
+              <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
+            </svg>
+            <div>
+              <span className="text-stone-400">Humidity</span>
+              <p className="text-stone-700 font-medium">{current.humidity}%</p>
+            </div>
           </div>
-          <div>
-            <span className="text-stone-400">Wind</span>
-            <p className="text-stone-700 font-medium">{Math.round(current.windSpeed)} km/h</p>
+          <div className="flex items-center gap-1.5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400 shrink-0">
+              <path d="M17.7 7.7a2.5 2.5 0 111.8 4.3H2" />
+              <path d="M9.6 4.6A2 2 0 1111 8H2" />
+              <path d="M12.6 19.4A2 2 0 1014 16H2" />
+            </svg>
+            <div>
+              <span className="text-stone-400">Wind</span>
+              <p className="text-stone-700 font-medium">{Math.round(current.windSpeed)} km/h</p>
+            </div>
           </div>
-          <div>
-            <span className="text-stone-400">Rain now</span>
-            <p className="text-stone-700 font-medium">{current.precipitation} mm</p>
+          <div className="flex items-center gap-1.5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500 shrink-0">
+              <path d="M4 14.899A7 7 0 1115.71 8h1.79a4.5 4.5 0 012.5 8.242" />
+              <path d="M16 14v6m-4-4v6m-4-4v6" />
+            </svg>
+            <div>
+              <span className="text-stone-400">Rain</span>
+              <p className="text-stone-700 font-medium">{current.precipitation} mm</p>
+            </div>
           </div>
           {current.seaTemperature !== null && (
-            <div>
-              <span className="text-stone-400">Sea at Kiama</span>
-              <p className="text-stone-700 font-medium">{Math.round(current.seaTemperature)}°C</p>
+            <div className="flex items-center gap-1.5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-400 shrink-0">
+                <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+              </svg>
+              <div>
+                <span className="text-stone-400">Sea</span>
+                <p className="text-stone-700 font-medium">{Math.round(current.seaTemperature)}°C</p>
+              </div>
             </div>
           )}
         </div>
