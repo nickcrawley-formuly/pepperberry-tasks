@@ -5,24 +5,20 @@ import { usePathname } from 'next/navigation';
 
 export default function NavigationProgress() {
   const pathname = usePathname();
-  const [progress, setProgress] = useState(0);
-  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const prevPathname = useRef(pathname);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (pathname !== prevPathname.current) {
-      // Navigation completed — finish the bar
-      setProgress(100);
-      setTimeout(() => {
-        setVisible(false);
-        setProgress(0);
-      }, 300);
+      // Navigation completed — hide spinner
+      setLoading(false);
       prevPathname.current = pathname;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
   }, [pathname]);
 
-  // Intercept link clicks to start the progress bar
+  // Intercept link clicks to show spinner
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       const anchor = (e.target as HTMLElement).closest('a');
@@ -31,38 +27,40 @@ export default function NavigationProgress() {
       if (!href || href.startsWith('http') || href.startsWith('tel:') || href.startsWith('#')) return;
       if (href === pathname) return;
 
-      // Start progress bar
-      setProgress(20);
-      setVisible(true);
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        setProgress((p) => {
-          if (p >= 90) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            return p;
-          }
-          return p + Math.random() * 10;
-        });
-      }, 200);
+      // Small delay so instant navigations don't flash
+      timeoutRef.current = setTimeout(() => setLoading(true), 120);
     }
 
     document.addEventListener('click', handleClick, true);
     return () => {
       document.removeEventListener('click', handleClick, true);
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [pathname]);
 
-  if (!visible && progress === 0) return null;
+  if (!loading) return null;
 
   return (
-    <div
-      className="fixed top-0 left-0 right-0 z-50 h-0.5 bg-transparent"
-    >
-      <div
-        className="h-full bg-amber-500 transition-all duration-300 ease-out"
-        style={{ width: `${progress}%` }}
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm">
+      <svg
+        className="w-10 h-10 animate-spin text-amber-600"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+        />
+      </svg>
     </div>
   );
 }
