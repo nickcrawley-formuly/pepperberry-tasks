@@ -135,7 +135,7 @@ function LoginForm() {
   const nextPinIndex = pin.findIndex((d) => d === '');
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -161,7 +161,7 @@ function LoginForm() {
         {/* Login Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-stone-900 rounded-2xl border border-stone-700 p-8 shadow-xl shadow-black/20"
+          className="bg-stone-900 rounded-2xl border border-stone-700 p-8 shadow-2xl shadow-black/40"
         >
           <div className="space-y-6">
             {/* User Select */}
