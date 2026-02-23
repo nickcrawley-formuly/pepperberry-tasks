@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 
 const ROLES = [
   { value: 'admin', label: 'Admin' },
-  { value: 'tradesperson', label: 'Tradesperson' },
-  { value: 'riding_school', label: 'Riding School' },
+  { value: 'tradesperson', label: 'Tradie' },
+  { value: 'riding_school', label: 'Regal Riding' },
 ] as const;
 
 const TRADE_TYPES = [
@@ -15,6 +15,7 @@ const TRADE_TYPES = [
   'electrician',
   'handyman',
   'landscaper',
+  'housekeeper',
   'general',
   'animal_carer',
 ] as const;
@@ -196,11 +197,11 @@ function UserRow({
 }) {
   const roleLabel =
     user.role === 'riding_school'
-      ? 'Riding School'
+      ? 'Regal Riding'
       : user.role === 'tradesperson'
         ? user.trade_type
           ? user.trade_type.charAt(0).toUpperCase() + user.trade_type.slice(1)
-          : 'Tradesperson'
+          : 'Tradie'
         : 'Admin';
 
   return (
