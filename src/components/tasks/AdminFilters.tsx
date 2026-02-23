@@ -44,9 +44,9 @@ export default function AdminFilters({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+      <div className="flex items-center gap-2 flex-wrap">
         {/* Priority */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <select
             value={filters.priority}
             onChange={(e) => update('priority', e.target.value)}
@@ -63,7 +63,7 @@ export default function AdminFilters({
         </div>
 
         {/* Category */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <select
             value={filters.category}
             onChange={(e) => update('category', e.target.value)}
@@ -80,7 +80,7 @@ export default function AdminFilters({
         </div>
 
         {/* Location */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <select
             value={filters.location}
             onChange={(e) => update('location', e.target.value)}
@@ -97,7 +97,7 @@ export default function AdminFilters({
         </div>
 
         {/* Assigned To */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <select
             value={filters.assignedTo}
             onChange={(e) => update('assignedTo', e.target.value)}
@@ -125,7 +125,7 @@ export default function AdminFilters({
                 assignedTo: '',
               })
             }
-            className="shrink-0 text-xs text-stone-500 hover:text-stone-700 transition px-2 py-2"
+            className="text-xs text-stone-500 hover:text-stone-700 transition px-2 py-2"
           >
             Clear
           </button>

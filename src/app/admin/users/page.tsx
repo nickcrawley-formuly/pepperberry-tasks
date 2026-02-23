@@ -22,7 +22,7 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="min-h-screen bg-stone-100">
-      <header className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200 sticky top-0 z-30">
         <div className="max-w-2xl mx-auto px-5 py-4 flex items-center gap-4">
           <Link
             href="/dashboard"

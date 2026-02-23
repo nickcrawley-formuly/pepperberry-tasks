@@ -54,7 +54,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-stone-100">
       <KeyboardShortcuts role={session.role} />
-      <header className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200 sticky top-0 z-30">
         <div className="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="/PBLogo.png" alt="Pepperberry" className="w-9 h-9 sm:w-11 sm:h-11 object-contain" />
