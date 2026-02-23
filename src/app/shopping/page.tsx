@@ -12,7 +12,6 @@ export default async function ShoppingPage() {
   const { data } = await supabaseAdmin
     .from('shopping_items')
     .select('*, adder:users!added_by(name)')
-    .order('is_bought', { ascending: true })
     .order('created_at', { ascending: false });
 
   const items: ShoppingItem[] = data || [];
@@ -49,11 +48,7 @@ export default async function ShoppingPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
-        <ShoppingList
-          initialItems={items}
-          userId={session.userId}
-          role={session.role}
-        />
+        <ShoppingList initialItems={items} />
       </main>
     </div>
   );

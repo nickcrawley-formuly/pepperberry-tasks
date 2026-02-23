@@ -140,7 +140,7 @@ function LoginForm() {
         {/* Logo */}
         <div className="text-center mb-8">
           <img
-            src="/PBFlavicon.jpg"
+            src="/PBLogo.png"
             alt="Pepperberry Farm"
             className="w-40 mx-auto object-contain rounded-2xl"
           />
