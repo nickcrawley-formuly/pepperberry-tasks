@@ -11,7 +11,7 @@ export async function GET() {
 
   const { data, error } = await supabaseAdmin
     .from('shopping_items')
-    .select('*, adder:users!added_by(name)')
+    .select('*, adder:users!added_by(name), assignee:users!assigned_to(name)')
     .order('is_bought', { ascending: true })
     .order('created_at', { ascending: false });
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const { title, category } = await request.json();
+  const { title, category, assigned_to } = await request.json();
 
   if (!title?.trim()) {
     return NextResponse.json({ error: 'Title is required' }, { status: 400 });
@@ -38,14 +38,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
   }
 
+  const insert: Record<string, unknown> = {
+    title: title.trim(),
+    category,
+    added_by: session.userId,
+  };
+
+  if (assigned_to) {
+    insert.assigned_to = assigned_to;
+  }
+
   const { data, error } = await supabaseAdmin
     .from('shopping_items')
-    .insert({
-      title: title.trim(),
-      category,
-      added_by: session.userId,
-    })
-    .select('*, adder:users!added_by(name)')
+    .insert(insert)
+    .select('*, adder:users!added_by(name), assignee:users!assigned_to(name)')
     .single();
 
   if (error) {

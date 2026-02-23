@@ -62,7 +62,9 @@ export interface ShoppingItem {
   title: string;
   category: 'hardware' | 'hay' | 'feed' | 'other';
   added_by: string;
+  assigned_to: string | null;
   is_bought: boolean;
   created_at: string;
   adder?: { name: string } | null;
+  assignee?: { name: string } | null;
 }

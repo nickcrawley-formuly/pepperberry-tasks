@@ -6,6 +6,7 @@ import { SHOPPING_CATEGORIES, SHOPPING_CATEGORY_LABELS } from '@/lib/constants';
 
 interface ShoppingListProps {
   initialItems: ShoppingItem[];
+  admins: { id: string; name: string }[];
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -15,10 +16,11 @@ const CATEGORY_COLORS: Record<string, string> = {
   other: 'bg-stone-100 text-stone-600',
 };
 
-export default function ShoppingList({ initialItems }: ShoppingListProps) {
+export default function ShoppingList({ initialItems, admins }: ShoppingListProps) {
   const [items, setItems] = useState<ShoppingItem[]>(initialItems);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<string>('other');
+  const [assignedTo, setAssignedTo] = useState<string>(admins[0]?.id || '');
   const [filter, setFilter] = useState<string>('all');
   const [adding, setAdding] = useState(false);
 
@@ -33,7 +35,7 @@ export default function ShoppingList({ initialItems }: ShoppingListProps) {
       const res = await fetch('/api/shopping', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title.trim(), category }),
+        body: JSON.stringify({ title: title.trim(), category, assigned_to: assignedTo || null }),
       });
       if (res.ok) {
         const item = await res.json();
@@ -71,6 +73,15 @@ export default function ShoppingList({ initialItems }: ShoppingListProps) {
           >
             {SHOPPING_CATEGORIES.map((c) => (
               <option key={c} value={c}>{SHOPPING_CATEGORY_LABELS[c]}</option>
+            ))}
+          </select>
+          <select
+            value={assignedTo}
+            onChange={(e) => setAssignedTo(e.target.value)}
+            className="rounded-lg border border-stone-200 px-2 py-2 text-sm text-stone-700 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-stone-300 transition"
+          >
+            {admins.map((a) => (
+              <option key={a.id} value={a.id}>{a.name.split(' ')[0]}</option>
             ))}
           </select>
           <button
@@ -123,7 +134,10 @@ export default function ShoppingList({ initialItems }: ShoppingListProps) {
             </button>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-stone-900 truncate">{item.title}</p>
-              <p className="text-[10px] text-stone-400">{item.adder?.name}</p>
+              <p className="text-[10px] text-stone-400">
+                {item.adder?.name}
+                {item.assignee?.name && <> &middot; <span className="text-amber-600 font-medium">{item.assignee.name.split(' ')[0]}</span></>}
+              </p>
             </div>
             <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${CATEGORY_COLORS[item.category]}`}>
               {SHOPPING_CATEGORY_LABELS[item.category]}

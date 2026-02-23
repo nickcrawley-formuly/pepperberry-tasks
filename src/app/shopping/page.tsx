@@ -10,12 +10,21 @@ export default async function ShoppingPage() {
   if (!session) redirect('/');
   if (session.role !== 'admin' && !session.allowedSections?.includes('cart')) redirect('/dashboard');
 
-  const { data } = await supabaseAdmin
-    .from('shopping_items')
-    .select('*, adder:users!added_by(name)')
-    .order('created_at', { ascending: false });
+  const [{ data }, { data: adminData }] = await Promise.all([
+    supabaseAdmin
+      .from('shopping_items')
+      .select('*, adder:users!added_by(name), assignee:users!assigned_to(name)')
+      .order('created_at', { ascending: false }),
+    supabaseAdmin
+      .from('users')
+      .select('id, name')
+      .eq('role', 'admin')
+      .eq('is_active', true)
+      .order('name'),
+  ]);
 
   const items: ShoppingItem[] = data || [];
+  const admins: { id: string; name: string }[] = adminData || [];
 
   return (
     <div className="min-h-screen bg-stone-100">
@@ -49,7 +58,7 @@ export default async function ShoppingPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
-        <ShoppingList initialItems={items} />
+        <ShoppingList initialItems={items} admins={admins} />
       </main>
     </div>
   );
