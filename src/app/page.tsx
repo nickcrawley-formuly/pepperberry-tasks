@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface UserOption {
   id: string;
@@ -9,7 +9,17 @@ interface UserOption {
 }
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const loggedOut = searchParams.get('logged_out') === '1';
   const [users, setUsers] = useState<UserOption[]>([]);
   const [selectedUser, setSelectedUser] = useState('');
   const [pin, setPin] = useState(['', '', '', '']);
@@ -116,6 +126,18 @@ export default function LoginPage() {
             className="w-40 mx-auto object-contain"
           />
         </div>
+
+        {/* Logged out message */}
+        {loggedOut && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-stone-800 border border-stone-700 px-4 py-3 text-sm text-stone-300">
+            <svg className="w-4 h-4 flex-shrink-0 text-stone-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logged out
+          </div>
+        )}
 
         {/* Login Form */}
         <form

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import SessionGuard from "@/components/SessionGuard";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,6 +34,7 @@ export default function RootLayout({
       >
         <ServiceWorkerRegistration />
         <OfflineIndicator />
+        <SessionGuard />
         {children}
       </body>
     </html>
