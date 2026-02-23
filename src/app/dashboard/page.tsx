@@ -1,4 +1,4 @@
-import { getSession } from '@/lib/auth';
+import { getSession, getSessionExpiry } from '@/lib/auth';
 import { fetchTasks } from '@/lib/tasks';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
@@ -8,6 +8,7 @@ import TaskList from '@/components/tasks/TaskList';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import PushNotificationPrompt from '@/components/PushNotificationPrompt';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
+import SessionTimer from '@/components/SessionTimer';
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -16,23 +17,10 @@ export default async function DashboardPage() {
     redirect('/');
   }
 
-  const tasks = await fetchTasks(session);
-
-  // Fetch current user's trade_type for header display
-  const { data: currentUser } = await supabaseAdmin
-    .from('users')
-    .select('trade_type')
-    .eq('id', session.userId)
-    .single();
-
-  const roleLabel =
-    session.role === 'admin'
-      ? 'Admin'
-      : session.role === 'riding_school'
-        ? 'Riding School'
-        : currentUser?.trade_type
-          ? currentUser.trade_type.charAt(0).toUpperCase() + currentUser.trade_type.slice(1).replace('_', ' ')
-          : 'Tradesperson';
+  const [tasks, sessionExpiry] = await Promise.all([
+    fetchTasks(session),
+    getSessionExpiry(),
+  ]);
 
   // Fetch active users for admin filter dropdown
   let users: { id: string; name: string }[] = [];
@@ -60,9 +48,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-3">
             <div className="text-right">
               <p className="text-sm font-medium text-stone-900">{session.name}</p>
-              {session.role === 'admin' && (
-                <p className="text-xs text-stone-400">{roleLabel}</p>
-              )}
+              {sessionExpiry && <SessionTimer expiresAt={sessionExpiry} />}
             </div>
             <PushNotificationPrompt />
             <LogoutButton />

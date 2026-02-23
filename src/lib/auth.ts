@@ -56,4 +56,16 @@ export async function getSession(): Promise<SessionPayload | null> {
   return verifySession(token);
 }
 
+export async function getSessionExpiry(): Promise<number | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_NAME)?.value;
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, SECRET);
+    return (payload.exp as number) ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export { COOKIE_NAME };

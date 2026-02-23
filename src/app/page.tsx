@@ -62,6 +62,11 @@ function LoginForm() {
     }
   }
 
+  const [secure, setSecure] = useState(false);
+  useEffect(() => {
+    setSecure(window.location.protocol === 'https:');
+  }, []);
+
   function handlePinKeyDown(index: number, e: React.KeyboardEvent) {
     if (e.key === 'Backspace' && !pin[index] && index > 0) {
       pinRefs.current[index - 1]?.focus();
@@ -247,6 +252,10 @@ function LoginForm() {
         <p className="text-center text-xs text-stone-400 mt-4">
           Sessions expire after 3 hours
         </p>
+        <div className="flex items-center justify-center gap-1.5 mt-3">
+          <span className={`w-2 h-2 rounded-full ${secure ? 'bg-emerald-500' : 'bg-stone-400'}`} />
+          <span className="text-[11px] text-stone-400">End-to-End Encryption</span>
+        </div>
       </div>
     </div>
   );
