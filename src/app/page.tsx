@@ -254,6 +254,7 @@ function LoginForm() {
             <p className="text-center text-xs text-stone-500">
               Sessions expire after 3 hours
             </p>
+            <p className="text-center text-[10px] text-stone-300 mt-2">velvet-basalt</p>
           </div>
         </form>
       </div>
