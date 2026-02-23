@@ -63,7 +63,9 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-3">
             <div className="text-right">
               <p className="text-sm font-medium text-stone-900">{session.name}</p>
-              <p className="text-xs text-stone-400">{roleLabel}</p>
+              {session.role === 'admin' && (
+                <p className="text-xs text-stone-400">{roleLabel}</p>
+              )}
             </div>
             <PushNotificationPrompt />
             <LogoutButton />
