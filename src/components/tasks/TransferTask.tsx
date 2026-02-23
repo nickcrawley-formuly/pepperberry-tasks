@@ -156,7 +156,7 @@ export default function TransferTask({ taskId, currentAssignedTo, users }: Trans
                 setComment('');
                 setError('');
               }}
-              className="px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-700 hover:bg-stone-100 transition"
+              className="px-3 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
             >
               Cancel
             </button>

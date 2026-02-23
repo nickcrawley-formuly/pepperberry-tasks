@@ -244,7 +244,7 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
         <button
           type="button"
           onClick={() => router.push(`/tasks/${task.id}`)}
-          className="px-5 py-2.5 rounded-lg border border-stone-200 text-sm font-medium text-stone-700 hover:bg-stone-100 transition"
+          className="px-5 py-2.5 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
         >
           Cancel
         </button>

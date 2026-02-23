@@ -212,7 +212,7 @@ function UserRow({
         <div className="flex items-center gap-3">
           <button
             onClick={onEdit}
-            className="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 hover:bg-stone-100 transition"
+            className="px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-medium text-stone-700 hover:bg-stone-200 transition"
           >
             Edit
           </button>
@@ -258,7 +258,7 @@ function UserRow({
             <button
               onClick={onDeleteCancel}
               disabled={deleteLoading}
-              className="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 hover:bg-stone-100 transition"
+              className="px-3 py-1.5 rounded-lg border border-stone-300 text-xs font-medium text-stone-700 hover:bg-stone-200 transition"
             >
               Cancel
             </button>
@@ -391,7 +391,7 @@ function AddUserForm({ onDone }: { onDone: (user: User | null) => void }) {
         <button
           type="button"
           onClick={() => onDone(null)}
-          className="px-4 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-700 hover:bg-stone-100 transition"
+          className="px-4 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
         >
           Cancel
         </button>
@@ -543,7 +543,7 @@ function EditUserForm({
         <button
           type="button"
           onClick={() => onDone(null)}
-          className="px-4 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-700 hover:bg-stone-100 transition"
+          className="px-4 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
         >
           Cancel
         </button>

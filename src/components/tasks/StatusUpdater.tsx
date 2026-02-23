@@ -7,7 +7,7 @@ import { STATUS_LABELS } from '@/lib/constants';
 const STATUSES = ['todo', 'in_progress', 'done'] as const;
 
 const STATUS_STYLES: Record<string, string> = {
-  todo: 'border-stone-200 text-stone-700 hover:bg-stone-100',
+  todo: 'border-stone-300 text-stone-700 hover:bg-stone-200',
   in_progress: 'border-amber-300 text-amber-600 hover:bg-amber-50',
   done: 'border-emerald-300 text-emerald-600 hover:bg-emerald-50',
 };

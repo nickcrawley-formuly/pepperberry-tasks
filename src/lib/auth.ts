@@ -11,14 +11,32 @@ export interface SessionPayload {
   mustSetPin?: boolean;
 }
 
+/** Seconds from now until midnight AEST (UTC+11) */
+function secondsUntilMidnightAEST(): number {
+  const now = new Date();
+  // Midnight AEST = 13:00 UTC (previous day) or next occurrence
+  const utcHours = now.getUTCHours();
+  const utcMinutes = now.getUTCMinutes();
+  const utcSeconds = now.getUTCSeconds();
+  const currentSecondOfDay = utcHours * 3600 + utcMinutes * 60 + utcSeconds;
+  // Midnight AEST = 13:00 UTC
+  const midnightAESTinUTC = 13 * 3600;
+  let diff = midnightAESTinUTC - currentSecondOfDay;
+  if (diff <= 0) diff += 86400;
+  return diff;
+}
+
 export async function createSession(payload: SessionPayload): Promise<string> {
+  const expirySeconds = secondsUntilMidnightAEST();
   const token = await new SignJWT(payload as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime(`${expirySeconds}s`)
     .sign(SECRET);
   return token;
 }
+
+export { secondsUntilMidnightAEST };
 
 export async function verifySession(token: string): Promise<SessionPayload | null> {
   try {

@@ -97,7 +97,7 @@ export default async function DashboardPage() {
             </Link>
             <Link
               href="/admin/users"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-stone-700 hover:bg-stone-100 transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-stone-300 text-sm font-medium text-stone-700 hover:bg-stone-200 transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
