@@ -46,7 +46,7 @@ export default function ReportProblem() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-900/30 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-900/50 transition"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fw-surface border border-fw-text/10 text-fw-text/50 text-sm font-medium hover:text-fw-text/80 hover:border-fw-text/20 transition"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -59,8 +59,8 @@ export default function ReportProblem() {
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-          <line x1="12" y1="9" x2="12" y2="13" />
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
           <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
         App Issue
