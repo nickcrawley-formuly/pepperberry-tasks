@@ -115,7 +115,7 @@ export default async function TaskDetailPage({
           <div className="flex items-center gap-4">
             <Link
               href="/dashboard"
-              className="text-fw-text/50 hover:text-fw-text/80 transition"
+              className="text-fw-text/50 hover:text-fw-text/80 transition p-2 -m-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

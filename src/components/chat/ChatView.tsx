@@ -172,7 +172,7 @@ function BoardTab({
   }
 
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100vh - 220px)' }}>
+    <div className="flex flex-col" style={{ height: 'calc(100dvh - 220px)' }}>
       {/* Messages */}
       <div ref={containerRef} className="flex-1 overflow-y-auto space-y-3 pb-4">
         {messages.length === 0 && (
@@ -193,7 +193,7 @@ function BoardTab({
                   {isAdmin && (
                     <button
                       onClick={() => handleDelete(msg.id)}
-                      className="text-red-400 hover:text-red-500 transition ml-auto"
+                      className="text-red-400 hover:text-red-500 transition ml-auto p-1.5 -m-1.5"
                       title="Delete message"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -454,7 +454,7 @@ function DMThread({
   }
 
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100vh - 220px)' }}>
+    <div className="flex flex-col" style={{ height: 'calc(100dvh - 220px)' }}>
       {/* Thread header */}
       <div className="flex items-center gap-3 pb-3 mb-3 border-b border-fw-surface">
         <button
@@ -500,10 +500,10 @@ function DMThread({
                   {isAdmin && (
                     <button
                       onClick={() => handleDelete(msg.id)}
-                      className="text-red-400 hover:text-red-500 transition"
+                      className="text-red-400 hover:text-red-500 transition p-1.5 -m-1.5"
                       title="Delete message"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
                       </svg>
                     </button>

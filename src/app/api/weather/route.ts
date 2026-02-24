@@ -7,6 +7,9 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
+  if (session.role !== 'admin' && !session.allowedSections?.includes('weather')) {
+    return NextResponse.json({ error: 'Not authorised' }, { status: 403 });
+  }
 
   try {
     const data = await fetchWeatherData();

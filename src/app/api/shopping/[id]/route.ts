@@ -16,6 +16,10 @@ export async function PUT(
 
   const { is_bought } = await request.json();
 
+  if (typeof is_bought !== 'boolean') {
+    return NextResponse.json({ error: 'is_bought must be a boolean' }, { status: 400 });
+  }
+
   const { data, error } = await supabaseAdmin
     .from('shopping_items')
     .update({ is_bought })

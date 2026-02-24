@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     name: session.name,
     role: session.role,
     mustSetPin: false,
+    allowedSections: session.allowedSections,
   });
 
   const response = NextResponse.json({ ok: true });

@@ -41,7 +41,7 @@ export default function NavigationProgress() {
   if (!loading) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-fw-bg/60 backdrop-blur-sm">
       <svg
         className="w-10 h-10 animate-spin text-fw-accent"
         fill="none"
