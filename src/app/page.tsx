@@ -200,30 +200,39 @@ function LoginForm() {
               </div>
             </div>
 
-            {/* PIN Input - always rendered, visibility toggled */}
-            <div className={selectedUser ? 'opacity-100 transition-opacity duration-200' : 'opacity-0 pointer-events-none'}>
+            {/* PIN Input - always visible, ghosted until user selected */}
+            <div className={`transition-opacity duration-300 ${selectedUser ? 'opacity-100' : 'opacity-30'}`}>
               <div className="flex gap-3 justify-center">
                 {pin.map((digit, i) => (
-                  <input
-                    key={i}
-                    ref={(el) => { pinRefs.current[i] = el; }}
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handlePinChange(i, e.target.value)}
-                    onKeyDown={(e) => handlePinKeyDown(i, e)}
-                    onPaste={i === 0 ? handlePinPaste : undefined}
-                    tabIndex={selectedUser ? 0 : -1}
-                    aria-label={`PIN digit ${i + 1}`}
-                    className={`w-14 h-14 text-center text-xl rounded-lg border bg-fw-surface text-fw-text focus:outline-none transition ${
-                      i === nextPinIndex
-                        ? 'border-fw-accent ring-2 ring-fw-accent/50'
-                        : digit
-                          ? 'border-stone-500'
+                  <div key={i} className="flex flex-col items-center">
+                    <input
+                      ref={(el) => { pinRefs.current[i] = el; }}
+                      type="password"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handlePinChange(i, e.target.value)}
+                      onKeyDown={(e) => handlePinKeyDown(i, e)}
+                      onPaste={i === 0 ? handlePinPaste : undefined}
+                      tabIndex={selectedUser ? 0 : -1}
+                      disabled={!selectedUser}
+                      aria-label={`PIN digit ${i + 1}`}
+                      className={`w-14 h-14 text-center text-xl rounded-lg border bg-fw-surface text-fw-text focus:outline-none transition disabled:cursor-not-allowed ${
+                        digit
+                          ? 'border-fw-accent'
                           : 'border-fw-surface'
-                    }`}
-                  />
+                      }`}
+                    />
+                    <div
+                      className={`h-1 rounded-full mt-2 transition-all duration-300 ${
+                        selectedUser && (i === nextPinIndex || (nextPinIndex === -1 && digit))
+                          ? 'w-14 bg-fw-accent'
+                          : selectedUser && digit
+                            ? 'w-14 bg-fw-accent/40'
+                            : 'w-14 bg-transparent'
+                      }`}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
