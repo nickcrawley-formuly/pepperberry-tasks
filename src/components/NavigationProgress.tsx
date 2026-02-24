@@ -11,14 +11,14 @@ export default function NavigationProgress() {
 
   useEffect(() => {
     if (pathname !== prevPathname.current) {
-      // Navigation completed — hide spinner
+      // Navigation completed — hide everything
       setLoading(false);
       prevPathname.current = pathname;
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
   }, [pathname]);
 
-  // Intercept link clicks to show spinner
+  // Intercept link clicks to show progress
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       const anchor = (e.target as HTMLElement).closest('a');
@@ -27,8 +27,8 @@ export default function NavigationProgress() {
       if (!href || href.startsWith('http') || href.startsWith('tel:') || href.startsWith('#')) return;
       if (href === pathname) return;
 
-      // Small delay so instant navigations don't flash
-      timeoutRef.current = setTimeout(() => setLoading(true), 120);
+      // Show immediately — no delay on mobile
+      timeoutRef.current = setTimeout(() => setLoading(true), 30);
     }
 
     document.addEventListener('click', handleClick, true);
@@ -41,26 +41,33 @@ export default function NavigationProgress() {
   if (!loading) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-fw-bg/60 backdrop-blur-sm">
-      <svg
-        className="w-10 h-10 animate-spin text-fw-accent"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        />
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-        />
-      </svg>
-    </div>
+    <>
+      {/* Top progress bar — instant visual feedback */}
+      <div className="fixed top-0 left-0 right-0 z-[60] h-0.5 bg-fw-accent/20">
+        <div className="h-full bg-fw-accent animate-progress-bar" />
+      </div>
+      {/* Full overlay spinner after a moment */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-fw-bg/60 backdrop-blur-sm animate-fade-in">
+        <svg
+          className="w-10 h-10 animate-spin text-fw-accent"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
+        </svg>
+      </div>
+    </>
   );
 }
