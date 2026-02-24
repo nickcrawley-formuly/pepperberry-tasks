@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  // Only admins can add shopping items
-  if (session.role !== 'admin') {
+  // Admins and users with cart access can add shopping items
+  if (session.role !== 'admin' && !session.allowedSections?.includes('cart')) {
     return NextResponse.json({ error: 'Not authorised' }, { status: 403 });
   }
 
