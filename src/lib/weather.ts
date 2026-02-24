@@ -106,7 +106,7 @@ export async function fetchWeatherData(): Promise<WeatherData> {
   const lastYear = currentYear - 1;
 
   // Current forecast + 30 days history
-  const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,weather_code&past_days=30&forecast_days=10&timezone=${TIMEZONE}&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,precipitation`;
+  const forecastUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LATITUDE}&longitude=${LONGITUDE}&daily=precipitation_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,weather_code&past_days=30&forecast_days=15&timezone=${TIMEZONE}&current=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,precipitation`;
 
   // Last year same 30-day window
   const todayDate = new Date(today + 'T00:00:00');

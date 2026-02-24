@@ -194,9 +194,9 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
         </div>
       </div>
 
-      {/* 10-Day Forecast */}
+      {/* 15-Day Forecast */}
       <div className="bg-fw-surface rounded-xl border border-fw-surface p-5">
-        <p className="text-xs font-medium text-fw-text/50 mb-3">10-Day Forecast</p>
+        <p className="text-xs font-medium text-fw-text/50 mb-3">15-Day Forecast</p>
         <div className="divide-y divide-fw-surface">
           {forecast.map((day) => (
             <div key={day.date} className="flex items-center py-2.5 first:pt-0 last:pb-0">
@@ -255,7 +255,13 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
             </div>
             {/* Bars */}
             <div className="flex-1">
-              <div className="flex items-end gap-px" style={{ minWidth: '100%', height: 120 }}>
+              <div className="relative flex items-end gap-px" style={{ minWidth: '100%', height: 120 }}>
+                {/* Horizontal grid lines */}
+                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none" style={{ zIndex: 0 }}>
+                  <div className="border-t border-fw-text/10" />
+                  <div className="border-t border-fw-text/10" />
+                  <div className="border-t border-fw-text/10" />
+                </div>
                 {daily.map((day, i) => {
                   const height = day.precipitationSum > 0
                     ? Math.max((day.precipitationSum / maxPrecip) * 100, 4)
