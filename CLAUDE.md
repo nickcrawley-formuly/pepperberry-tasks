@@ -4,7 +4,7 @@
 
 A property management web app for **Pepperberry** — a private home property in Coolangatta, NSW, Australia. The property includes multiple paddocks, a workshop, a house and driveway. The eastern paddocks are leased to **Regal Riding**.
 
-The app lets the two owners (admins) assign and track jobs across the property, manage a shared shopping list, and monitor local weather. Tradies (fencers, plumbers, electricians, handymen, landscapers, housekeepers, animal carers) log in to see only their assigned work. Regal Riding staff see only their related tasks.
+The app lets the two owners (admins) assign and track jobs across the property, manage a shared shopping list, monitor local weather, and communicate via a News board and direct messages. Tradies (fencers, plumbers, electricians, handymen, landscapers, housekeepers, animal carers) log in to see only their assigned work. Regal Riding staff see only their related tasks.
 
 ### Horses
 
@@ -32,7 +32,7 @@ The system must be simple enough for someone to log in on a phone, check their t
 - **Styling:** Tailwind CSS
 - **Deployment:** Vercel
 - **Auth:** Custom name + 4-digit PIN (no email/password, no Supabase Auth)
-- **Weather:** Open-Meteo API (current conditions, 7-day forecast, rainfall history)
+- **Weather:** Open-Meteo API (current conditions, 15-day forecast, rainfall history)
 - **Radar:** Windy.com embed (Wollongong region)
 - **PWA:** Service worker for offline support and push notifications
 
@@ -48,7 +48,7 @@ pepperberry-tasks/
 ├── tailwind.config.ts
 ├── tsconfig.json
 ├── public/
-│   ├── PBLogo.png              # App logo
+│   ├── PBLogo.png              # App logo (white on transparent, for dark theme)
 │   ├── sw.js                   # Service worker (push + offline only, no fetch caching)
 │   └── offline.html            # Offline fallback page
 ├── supabase/
@@ -69,6 +69,8 @@ pepperberry-tasks/
     │   │   ├── [id]/page.tsx        # Job detail view
     │   │   ├── [id]/edit/           # Edit job form
     │   │   └── new/                 # Create job form
+    │   ├── chat/
+    │   │   └── page.tsx             # News page (chatboard + direct messages)
     │   ├── admin/
     │   │   ├── loading.tsx
     │   │   └── users/               # User management (admin only)
@@ -82,6 +84,7 @@ pepperberry-tasks/
     │       ├── auth/            # login, logout, check, set-pin, users
     │       ├── tasks/           # CRUD, comments, photos, transfer, series, export
     │       ├── users/           # CRUD
+    │       ├── chat/            # Board messages, DMs, conversations, seen tracking
     │       ├── shopping/        # CRUD
     │       ├── weather/         # Weather data proxy
     │       ├── push-subscription/   # Push notification registration
@@ -109,6 +112,8 @@ pepperberry-tasks/
     │   │   ├── TransferTask.tsx      # Reassign job
     │   │   ├── DeleteTaskButton.tsx
     │   │   └── DeleteSeriesButton.tsx
+    │   ├── chat/
+    │   │   └── ChatView.tsx          # Chatboard + DMs with admin delete
     │   ├── shopping/
     │   │   └── ShoppingList.tsx      # Shopping list with buyer assignment
     │   └── weather/
@@ -133,7 +138,7 @@ pepperberry-tasks/
 - **Server-only code** (DB queries, auth checks) stays in API routes or Server Components. Never import `supabase/admin.ts` from client code.
 - **One component per file.** File name matches the default export: `TaskCard.tsx` exports `TaskCard`.
 - Use `'use client'` directive only on components that need interactivity.
-- Every route group has a `loading.tsx` that renders `<LoadingScreen />` (amber spinner on stone-100 background).
+- Every route group has a `loading.tsx` that renders `<LoadingScreen />` (green spinner on dark background).
 
 ### Important: Supabase Client Caching
 
@@ -153,7 +158,9 @@ The `supabaseAdmin` client in `src/lib/supabase/admin.ts` is configured with `ca
 | must_set_pin | boolean | Default true. New users must set PIN on first login |
 | last_login | timestamptz | Nullable. Set on successful login |
 | phone | text | Nullable. Contact number |
-| allowed_sections | text[] | Nullable. Non-admin section access, e.g. `['weather', 'cart']` |
+| allowed_sections | text[] | Nullable. Non-admin section access, e.g. `['weather', 'cart', 'chat']` |
+| board_last_seen_at | timestamptz | Default `now()`. Tracks last viewed chatboard |
+| dm_last_seen_at | timestamptz | Default `now()`. Tracks last viewed DMs |
 | created_at | timestamptz | Default `now()` |
 
 ### `tasks`
@@ -224,6 +231,23 @@ The `supabaseAdmin` client in `src/lib/supabase/admin.ts` is configured with `ca
 | is_bought | boolean | Default false |
 | created_at | timestamptz | Default `now()` |
 
+### `chat_messages`
+| Column | Type | Notes |
+|--------|------|-------|
+| id | uuid | PK |
+| user_id | uuid | FK → `users.id` |
+| content | text | Message body (max 500 chars) |
+| created_at | timestamptz | Default `now()` |
+
+### `direct_messages`
+| Column | Type | Notes |
+|--------|------|-------|
+| id | uuid | PK |
+| sender_id | uuid | FK → `users.id` |
+| recipient_id | uuid | FK → `users.id` |
+| content | text | Message body (max 500 chars) |
+| created_at | timestamptz | Default `now()` |
+
 ### `pin_reset_requests`
 | Column | Type | Notes |
 |--------|------|-------|
@@ -241,7 +265,8 @@ The `supabaseAdmin` client in `src/lib/supabase/admin.ts` is configured with `ca
 - Create, edit, delete, and reassign any job
 - Manage users (add/remove tradies and Regal Riding staff)
 - Access admin dashboard with overview stats
-- Access all sections (weather, shopping, etc.)
+- Access all sections (weather, shopping, news, etc.)
+- Delete any chatboard post or direct message
 
 ### `tradesperson` (Tradies — displayed as "Tradie" in UI)
 Trade types: `fencer`, `plumber`, `electrician`, `handyman`, `landscaper`, `housekeeper`, `general`, `animal_carer`
@@ -311,13 +336,13 @@ Use these exact string values in the `location` column:
 ### Login Page (`/`)
 - "Private and Confidential" notice above the form
 - "Login as.." dropdown to select user
-- PIN input boxes appear only after a user is selected (amber highlight on active box)
+- PIN input boxes appear only after a user is selected (green highlight on active box)
 - Release name shown at bottom (e.g. `velvet-basalt`)
 - Auto-submits when 4th PIN digit entered
 
 ### Dashboard (`/dashboard`)
 - Sticky header with PB logo, user name, session expiry countdown ("Session expires in Xh Xm"), and logout icon
-- Navigation buttons: **New Job** (admin only) → **Jobs** → **Weather** → **Cart** → **Users** (admin only)
+- Navigation buttons: **New Job** (admin only) → **Jobs** → **Weather** → **Cart** → **News** → **Users** (admin only)
 - Non-admin users only see sections permitted by their `allowed_sections`
 - Admin dashboard stats summary
 - Filterable/sortable job list; urgent jobs always sorted first
@@ -325,14 +350,22 @@ Use these exact string values in the `location` column:
 ### Weather (`/weather`)
 - Header shows "Weather" with "Open-Meteo · Updated {time}" subtitle
 - **Current conditions:** Temperature (red when ≥30°C), condition text, contextual summary sentence, icon-only stats (humidity, wind, rain, sea temp at Kiama)
-- **7-day forecast:** Day, icon, description, high/low temps, rain probability %, precipitation
-- **Rainfall chart:** 30-day bar chart comparing this year vs last year, with Y-axis, tooltips, date labels
+- **15-day forecast:** Day, icon, description, high/low temps, rain probability %, precipitation
+- **Rainfall chart:** 30-day bar chart comparing this year vs last year, with Y-axis, horizontal grid lines, tooltips, date labels
 - **Rain radar:** Windy.com Wollongong embed, lazy-loaded on hover/tap (play button placeholder until activated)
 - **YTD comparison:** This year vs last year rainfall totals with monthly breakdown
 - Heavy rain warning banner when forecast includes 20mm+ days
 
+### News (`/chat`)
+- **Chatboard tab:** Public message board visible to all users with `chat` access. Polls every 15s.
+- **Messages tab:** Direct messages between users. Conversation list, user picker for new DMs.
+- Admins can delete any chatboard post or DM (trash icon always visible).
+- Unread message counts shown on dashboard as notification banners.
+- Max message length: 500 characters.
+
 ### Shopping (`/shopping`)
 - Add items with title, category (hardware/hay/feed/other), and buyer assignment (which admin buys it)
+- Any user with `cart` in `allowed_sections` can add and mark items (not just admins)
 - Each item shows who's assigned to buy it
 - Mark items as bought, delete items
 
@@ -376,7 +409,13 @@ npx supabase db push --linked --include-all  # Push migrations
 - **Tailwind CSS only.** No CSS modules, no styled-components.
 - Use Tailwind's design system (spacing scale, color palette). Avoid arbitrary values where possible.
 - Mobile-first responsive design. The primary use case is tradies on phones.
-- **Light clean theme.** `stone-100` page backgrounds, white cards with `stone-200` borders. `amber-600` primary buttons with white text. `stone-900` headings, `stone-500` secondary text. Login form uses dark theme (`stone-900` background, `stone-700` borders).
+- **Forest Whispers dark theme.** Custom Tailwind colors defined in `tailwind.config.ts`:
+  - `fw-bg` (#1A1A1A) — page backgrounds
+  - `fw-surface` (#3D3F47) — cards, panels, headers, inputs
+  - `fw-text` (#EDEDEE) — body text (with opacity variants: `/80`, `/70`, `/50`, `/40`, `/30`)
+  - `fw-accent` (#5C8A2E) — buttons, links, active states
+  - `fw-hover` (#3D6B1E) — hover/focus on interactive elements
+  - Sticky headers use `bg-fw-surface`. Primary buttons use `bg-fw-accent` with white text.
 
 ### API Routes
 - All API routes in `src/app/api/`.
