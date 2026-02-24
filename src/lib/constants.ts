@@ -22,7 +22,7 @@ export const LOCATIONS = [
   'stables',
   'Front_garden',
   'Back_garden',
-  'VegebtalePatch',
+  'VegetablePatch',
   'front_gate',
 ] as const;
 
@@ -69,6 +69,8 @@ export const ACCEPTED_IMAGE_TYPES = [
 
 export const SHOPPING_CATEGORIES = ['hardware', 'hay', 'feed', 'other'] as const;
 
+export const MAX_CHAT_MESSAGE_LENGTH = 500;
+
 export const SHOPPING_CATEGORY_LABELS: Record<string, string> = {
   hardware: 'Hardware',
   hay: 'Hay',
@@ -87,6 +89,6 @@ export const LOCATION_LABELS: Record<string, string> = {
   stables: 'Stables',
   Front_garden: 'Front Garden',
   Back_garden: 'Back Garden',
-  VegebtalePatch: 'Veggie Patch',
+  VegetablePatch: 'Veggie Patch',
   front_gate: 'Front Gate',
 };

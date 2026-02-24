@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getSession } from '@/lib/auth';
+import { STATUS_LABELS, PRIORITY_LABELS } from '@/lib/constants';
 
 function escapeCSV(value: string | null | undefined): string {
   if (value == null) return '';
@@ -10,19 +11,6 @@ function escapeCSV(value: string | null | undefined): string {
   }
   return str;
 }
-
-const STATUS_LABELS: Record<string, string> = {
-  todo: 'To Do',
-  in_progress: 'In Progress',
-  done: 'Done',
-};
-
-const PRIORITY_LABELS: Record<string, string> = {
-  low: 'Low',
-  medium: 'Medium',
-  high: 'High',
-  urgent: 'Urgent',
-};
 
 export async function GET() {
   const session = await getSession();

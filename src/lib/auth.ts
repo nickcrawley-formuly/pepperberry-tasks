@@ -15,25 +15,22 @@ export interface SessionPayload {
   allowedSections?: string[];
 }
 
-/** Seconds from now until midnight AEST (UTC+11) */
-function secondsUntilMidnightAEST(): number {
+/** Seconds from now until midnight Sydney time (handles AEST/AEDT automatically) */
+function secondsUntilMidnightSydney(): number {
   const now = new Date();
-  // Midnight AEST = 13:00 UTC (previous day) or next occurrence
-  const utcHours = now.getUTCHours();
-  const utcMinutes = now.getUTCMinutes();
-  const utcSeconds = now.getUTCSeconds();
-  const currentSecondOfDay = utcHours * 3600 + utcMinutes * 60 + utcSeconds;
-  // Midnight AEST = 13:00 UTC
-  const midnightAESTinUTC = 13 * 3600;
-  let diff = midnightAESTinUTC - currentSecondOfDay;
-  if (diff <= 0) diff += 86400;
-  return diff;
+  // Get current Sydney time using Intl to handle DST automatically
+  const sydneyStr = now.toLocaleString('en-AU', { timeZone: 'Australia/Sydney', hour12: false });
+  // Parse "DD/MM/YYYY, HH:MM:SS" format
+  const timePart = sydneyStr.split(', ')[1];
+  const [h, m, s] = timePart.split(':').map(Number);
+  const currentSecondsInSydney = h * 3600 + m * 60 + s;
+  return 86400 - currentSecondsInSydney;
 }
 
 const MAX_SESSION_SECONDS = 3 * 3600; // 3 hours
 
 export async function createSession(payload: SessionPayload): Promise<string> {
-  const expirySeconds = Math.min(secondsUntilMidnightAEST(), MAX_SESSION_SECONDS);
+  const expirySeconds = Math.min(secondsUntilMidnightSydney(), MAX_SESSION_SECONDS);
   const token = await new SignJWT(payload as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -41,8 +38,6 @@ export async function createSession(payload: SessionPayload): Promise<string> {
     .sign(SECRET);
   return token;
 }
-
-export { secondsUntilMidnightAEST, MAX_SESSION_SECONDS };
 
 export async function verifySession(token: string): Promise<SessionPayload | null> {
   try {

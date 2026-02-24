@@ -102,8 +102,6 @@ function LoginForm() {
     setError('');
     setLoading(true);
 
-    if (!selectedUser) return;
-
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',

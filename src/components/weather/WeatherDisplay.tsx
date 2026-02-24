@@ -338,7 +338,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
                     <div key={day.date} className="flex-1 text-center">
                       {showLabel && (
                         <span className="text-[9px] text-fw-text/40 leading-none">
-                          {formatDateLabel(day.date)}
+                          {formatDateShort(day.date)}
                         </span>
                       )}
                     </div>
@@ -456,10 +456,6 @@ function formatDateShort(dateStr: string): string {
   return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
 }
 
-function formatDateLabel(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
-}
 
 function formatDayName(dateStr: string): string {
   const d = new Date(dateStr + 'T00:00:00');
