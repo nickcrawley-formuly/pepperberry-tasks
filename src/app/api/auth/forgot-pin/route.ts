@@ -8,27 +8,27 @@ const RATE_LIMIT_MS = 60 * 60 * 1000; // 1 hour
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await request.json();
+    const { name } = await request.json();
 
-    if (!userId || typeof userId !== 'string') {
+    if (!name || typeof name !== 'string') {
       return NextResponse.json({ ok: true });
     }
 
-    // In-memory rate limit check
-    const lastRequest = rateLimitMap.get(userId);
-    if (lastRequest && Date.now() - lastRequest < RATE_LIMIT_MS) {
-      return NextResponse.json({ ok: true });
-    }
-
-    // Verify user exists and is active
+    // Verify user exists and is active (look up by name, not ID)
     const { data: user } = await supabaseAdmin
       .from('users')
       .select('id, name')
-      .eq('id', userId)
+      .eq('name', name)
       .eq('is_active', true)
       .single();
 
     if (!user) {
+      return NextResponse.json({ ok: true });
+    }
+
+    // In-memory rate limit check
+    const lastRequest = rateLimitMap.get(user.id);
+    if (lastRequest && Date.now() - lastRequest < RATE_LIMIT_MS) {
       return NextResponse.json({ ok: true });
     }
 
@@ -37,23 +37,23 @@ export async function POST(request: NextRequest) {
     const { data: recentRequest } = await supabaseAdmin
       .from('pin_reset_requests')
       .select('id')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .gte('requested_at', oneHourAgo)
       .limit(1)
       .single();
 
     if (recentRequest) {
-      rateLimitMap.set(userId, Date.now());
+      rateLimitMap.set(user.id, Date.now());
       return NextResponse.json({ ok: true });
     }
 
     // Insert request
     await supabaseAdmin
       .from('pin_reset_requests')
-      .insert({ user_id: userId });
+      .insert({ user_id: user.id });
 
     // Update in-memory rate limit
-    rateLimitMap.set(userId, Date.now());
+    rateLimitMap.set(user.id, Date.now());
 
     // Notify all active admins
     const { data: admins } = await supabaseAdmin

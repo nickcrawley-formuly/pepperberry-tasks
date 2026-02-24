@@ -4,7 +4,6 @@ import { Suspense, useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface UserOption {
-  id: string;
   name: string;
 }
 
@@ -103,14 +102,13 @@ function LoginForm() {
     setError('');
     setLoading(true);
 
-    const user = users.find((u) => u.id === selectedUser);
-    if (!user) return;
+    if (!selectedUser) return;
 
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: user.name, pin: fullPin }),
+        body: JSON.stringify({ name: selectedUser, pin: fullPin }),
       });
 
       const data = await res.json();
@@ -185,7 +183,7 @@ function LoginForm() {
                     {usersLoading ? 'Loading...' : 'Login as..'}
                   </option>
                   {users.map((u) => (
-                    <option key={u.id} value={u.id}>
+                    <option key={u.name} value={u.name}>
                       {u.name}
                     </option>
                   ))}
@@ -244,7 +242,7 @@ function LoginForm() {
                       await fetch('/api/auth/forgot-pin', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: selectedUser }),
+                        body: JSON.stringify({ name: selectedUser }),
                       });
                       setForgotPinSent(true);
                     } catch {
