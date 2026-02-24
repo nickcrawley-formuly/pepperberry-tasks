@@ -7,19 +7,24 @@ const COOKIE_NAME = 'pb-session';
 const PUBLIC_PATHS = ['/', '/api/auth/login', '/api/auth/users', '/api/auth/check', '/api/auth/forgot-pin'];
 const SET_PIN_PATHS = ['/set-pin', '/api/auth/set-pin'];
 
+function noCacheHeaders(response: NextResponse) {
+  response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public paths
   if (PUBLIC_PATHS.includes(pathname)) {
-    return NextResponse.next();
+    return noCacheHeaders(NextResponse.next());
   }
 
   // Check for session cookie
   const token = request.cookies.get(COOKIE_NAME)?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return noCacheHeaders(NextResponse.redirect(new URL('/', request.url)));
   }
 
   try {
@@ -27,18 +32,15 @@ export async function middleware(request: NextRequest) {
 
     // If user must set PIN, only allow set-pin paths
     if (payload.mustSetPin && !SET_PIN_PATHS.includes(pathname)) {
-      return NextResponse.redirect(new URL('/set-pin', request.url));
+      return noCacheHeaders(NextResponse.redirect(new URL('/set-pin', request.url)));
     }
 
-    const response = NextResponse.next();
-    // Prevent browser from caching authenticated pages
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    return response;
+    return noCacheHeaders(NextResponse.next());
   } catch {
     // Invalid or expired token — redirect to login
     const response = NextResponse.redirect(new URL('/', request.url));
     response.cookies.delete(COOKIE_NAME);
-    return response;
+    return noCacheHeaders(response);
   }
 }
 
