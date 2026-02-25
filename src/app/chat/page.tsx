@@ -17,10 +17,9 @@ export default async function ChatPage({
   if (!session) redirect('/');
   if (session.role !== 'admin' && !session.allowedSections?.includes('chat')) redirect('/dashboard');
 
-  const sessionExpiry = await getSessionExpiry();
-
-  // Fetch initial board messages, conversations, and active users in parallel
-  const [{ data: messagesData }, { data: usersData }] = await Promise.all([
+  // Fetch all data in parallel
+  const [sessionExpiry, { data: messagesData }, { data: usersData }, { data: dmsData }] = await Promise.all([
+    getSessionExpiry(),
     supabaseAdmin
       .from('chat_messages')
       .select('*, user:users!user_id(name)')
@@ -31,14 +30,13 @@ export default async function ChatPage({
       .select('id, name')
       .eq('is_active', true)
       .order('name'),
+    supabaseAdmin
+      .from('direct_messages')
+      .select('id, sender_id, recipient_id, content, created_at, sender:users!sender_id(name), recipient:users!recipient_id(name)')
+      .or(`sender_id.eq.${session.userId},recipient_id.eq.${session.userId}`)
+      .order('created_at', { ascending: false })
+      .limit(500),
   ]);
-
-  // Build conversations list server-side
-  const { data: dmsData } = await supabaseAdmin
-    .from('direct_messages')
-    .select('id, sender_id, recipient_id, content, created_at, sender:users!sender_id(name), recipient:users!recipient_id(name)')
-    .or(`sender_id.eq.${session.userId},recipient_id.eq.${session.userId}`)
-    .order('created_at', { ascending: false });
 
   const conversationMap = new Map<string, Conversation>();
   for (const dm of dmsData || []) {

@@ -1,6 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { supabaseAdmin } from '@/lib/supabase/admin';
 
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is required');
@@ -53,19 +52,7 @@ export async function getSession(): Promise<SessionPayload | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
-  const session = await verifySession(token);
-  if (!session) return null;
-
-  // Verify user is still active in the database
-  const { data: user } = await supabaseAdmin
-    .from('users')
-    .select('is_active')
-    .eq('id', session.userId)
-    .single();
-
-  if (!user || !user.is_active) return null;
-
-  return session;
+  return verifySession(token);
 }
 
 export async function getSessionExpiry(): Promise<number | null> {
