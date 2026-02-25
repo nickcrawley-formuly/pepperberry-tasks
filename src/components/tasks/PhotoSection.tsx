@@ -46,7 +46,9 @@ export default function PhotoSection({
   function compressImage(file: File): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
       img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
         const MAX_DIM = 1920;
         let { width, height } = img;
         if (width > MAX_DIM || height > MAX_DIM) {
@@ -66,8 +68,11 @@ export default function PhotoSection({
           0.85
         );
       };
-      img.onerror = () => reject(new Error('Could not read image'));
-      img.src = URL.createObjectURL(file);
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Could not read image'));
+      };
+      img.src = objectUrl;
     });
   }
 

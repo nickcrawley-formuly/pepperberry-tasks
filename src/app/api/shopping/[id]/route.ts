@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type Params = { params: Promise<{ id: string }> };
+
+export async function PUT(request: NextRequest, { params }: Params) {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
@@ -14,6 +13,7 @@ export async function PUT(
     return NextResponse.json({ error: 'Not authorised' }, { status: 403 });
   }
 
+  const { id } = await params;
   const { is_bought } = await request.json();
 
   if (typeof is_bought !== 'boolean') {
@@ -23,7 +23,7 @@ export async function PUT(
   const { data, error } = await supabaseAdmin
     .from('shopping_items')
     .update({ is_bought })
-    .eq('id', params.id)
+    .eq('id', id)
     .select('*, adder:users!added_by(name), assignee:users!assigned_to(name)')
     .single();
 
@@ -34,10 +34,7 @@ export async function PUT(
   return NextResponse.json(data);
 }
 
-export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_request: NextRequest, { params }: Params) {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
@@ -48,10 +45,12 @@ export async function DELETE(
     return NextResponse.json({ error: 'Not authorised' }, { status: 403 });
   }
 
+  const { id } = await params;
+
   const { error } = await supabaseAdmin
     .from('shopping_items')
     .delete()
-    .eq('id', params.id);
+    .eq('id', id);
 
   if (error) {
     return NextResponse.json({ error: 'Failed to delete item' }, { status: 500 });

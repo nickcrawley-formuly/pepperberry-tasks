@@ -169,21 +169,12 @@ function isFailedLoginsActive(sinceStr: string): boolean {
   return new Date(sinceStr).getTime() >= sevenDaysAgo;
 }
 
-/** Check if user logged in after the most recent midnight AEST (13:00 UTC) */
+/** Check if user logged in today in Sydney timezone */
 function isLoggedInToday(lastLogin: string | null): boolean {
   if (!lastLogin) return false;
-  const now = new Date();
-  const utcHours = now.getUTCHours();
-  // Most recent midnight AEST = today 13:00 UTC if current UTC >= 13, else yesterday 13:00 UTC
-  const midnightAEST = new Date(now);
-  midnightAEST.setUTCMinutes(0, 0, 0);
-  if (utcHours >= 13) {
-    midnightAEST.setUTCHours(13);
-  } else {
-    midnightAEST.setUTCHours(13);
-    midnightAEST.setUTCDate(midnightAEST.getUTCDate() - 1);
-  }
-  return new Date(lastLogin) >= midnightAEST;
+  const todaySydney = new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' });
+  const loginDaySydney = new Date(lastLogin).toLocaleDateString('en-CA', { timeZone: 'Australia/Sydney' });
+  return loginDaySydney === todaySydney;
 }
 
 function UserRow({

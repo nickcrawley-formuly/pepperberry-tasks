@@ -89,10 +89,12 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
     }
   }
 
-  const selectClass =
-    'w-full rounded-lg border border-fw-surface px-3 py-2.5 text-sm text-fw-text bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
+  const selectBase =
+    'w-full rounded-lg px-3 py-2.5 text-sm text-fw-text bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
+  const selectDefault = `${selectBase} border border-fw-text/20`;
+  const selectFilled = `${selectBase} border border-fw-accent`;
   const inputClass =
-    'w-full rounded-lg border border-fw-surface px-3 py-2.5 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
+    'w-full rounded-lg border border-fw-text/20 px-3 py-2.5 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
   const labelClass = 'block text-xs font-medium text-fw-text/50 mb-1.5';
 
   return (
@@ -138,7 +140,7 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
               id="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className={selectClass}
+              className={selectFilled}
             >
               {STATUSES.map((s) => (
                 <option key={s} value={s}>{STATUS_LABELS[s]}</option>
@@ -152,7 +154,7 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
               id="priority"
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className={selectClass}
+              className={selectFilled}
             >
               {PRIORITIES.map((p) => (
                 <option key={p} value={p}>{PRIORITY_LABELS[p]}</option>
@@ -170,7 +172,7 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               required
-              className={selectClass}
+              className={selectFilled}
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
@@ -185,7 +187,7 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               required
-              className={selectClass}
+              className={selectFilled}
             >
               {LOCATIONS.map((l) => (
                 <option key={l} value={l}>{LOCATION_LABELS[l]}</option>
@@ -202,7 +204,7 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
               id="assigned_to"
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              className={selectClass}
+              className={assignedTo ? selectFilled : selectDefault}
             >
               <option value="">Unassigned</option>
               {users

@@ -42,9 +42,16 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
+    const statusUpdate: Record<string, unknown> = { status };
+    if (status === 'done') {
+      statusUpdate.completed_at = new Date().toISOString();
+    } else if (task.status === 'done') {
+      statusUpdate.completed_at = null;
+    }
+
     const { error } = await supabaseAdmin
       .from('tasks')
-      .update({ status })
+      .update(statusUpdate)
       .eq('id', id);
 
     if (error) {
@@ -81,6 +88,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
     updates.status = body.status;
+    if (body.status === 'done') {
+      updates.completed_at = new Date().toISOString();
+    } else if (task.status === 'done') {
+      updates.completed_at = null;
+    }
   }
   if (body.priority !== undefined) {
     if (!PRIORITIES.includes(body.priority)) {

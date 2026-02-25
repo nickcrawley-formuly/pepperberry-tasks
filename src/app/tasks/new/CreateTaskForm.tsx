@@ -121,10 +121,12 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
     }
   }
 
-  const selectClass =
-    'w-full rounded-lg border border-fw-surface px-3 py-2.5 text-sm text-fw-text bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
+  const selectBase =
+    'w-full rounded-lg px-3 py-2.5 text-sm text-fw-text bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
+  const selectDefault = `${selectBase} border border-fw-text/20`;
+  const selectFilled = `${selectBase} border border-fw-accent`;
   const inputClass =
-    'w-full rounded-lg border border-fw-surface px-3 py-2.5 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
+    'w-full rounded-lg border border-fw-text/20 px-3 py-2.5 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition';
   const labelClass = 'block text-xs font-medium text-fw-text/50 mb-1.5';
 
   return (
@@ -173,7 +175,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
               id="priority"
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className={selectClass}
+              className={priority ? selectFilled : selectDefault}
             >
               {PRIORITIES.map((p) => (
                 <option key={p} value={p}>
@@ -192,7 +194,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               required
-              className={selectClass}
+              className={category ? selectFilled : selectDefault}
             >
               <option value="">Select...</option>
               {CATEGORIES.map((c) => (
@@ -215,7 +217,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               required
-              className={selectClass}
+              className={location ? selectFilled : selectDefault}
             >
               <option value="">Select...</option>
               {LOCATIONS.map((l) => (
@@ -234,7 +236,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
               id="assigned_to"
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              className={selectClass}
+              className={assignedTo ? selectFilled : selectDefault}
             >
               <option value="">Unassigned</option>
               {users
@@ -261,7 +263,7 @@ export default function CreateTaskForm({ users }: CreateTaskFormProps) {
               id="repeat"
               value={recurrencePattern}
               onChange={(e) => setRecurrencePattern(e.target.value)}
-              className={selectClass}
+              className={recurrencePattern ? selectFilled : selectDefault}
             >
               <option value="">Does not repeat</option>
               {RECURRENCE_PATTERNS.map((p) => (
