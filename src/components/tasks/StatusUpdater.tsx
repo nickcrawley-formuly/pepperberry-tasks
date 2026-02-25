@@ -7,9 +7,9 @@ import { STATUS_LABELS } from '@/lib/constants';
 const STATUSES = ['todo', 'in_progress', 'done'] as const;
 
 const STATUS_STYLES: Record<string, string> = {
-  todo: 'border-fw-text/20 text-fw-text/80 hover:bg-fw-bg',
-  in_progress: 'border-amber-300 text-fw-accent hover:bg-amber-50',
-  done: 'border-emerald-300 text-emerald-600 hover:bg-emerald-50',
+  todo: 'border-fw-text/20 text-fw-text/80 hover:bg-fw-text/5',
+  in_progress: 'border-amber-500/40 text-amber-400 hover:bg-amber-500/10',
+  done: 'border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10',
 };
 
 const ACTIVE_STYLES: Record<string, string> = {
@@ -27,10 +27,14 @@ export default function StatusUpdater({ taskId, currentStatus }: StatusUpdaterPr
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleStatusChange(newStatus: string) {
     if (newStatus === status || loading) return;
     setLoading(true);
+    setError('');
+
+    const previousStatus = status;
 
     try {
       const res = await fetch(`/api/tasks/${taskId}`, {
@@ -42,28 +46,39 @@ export default function StatusUpdater({ taskId, currentStatus }: StatusUpdaterPr
       if (res.ok) {
         setStatus(newStatus);
         router.refresh();
+      } else {
+        setError('Failed to update. Try again.');
+        setStatus(previousStatus);
       }
+    } catch {
+      setError('Connection error. Try again.');
+      setStatus(previousStatus);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="flex gap-2">
-      {STATUSES.map((s) => (
-        <button
-          key={s}
-          onClick={() => handleStatusChange(s)}
-          disabled={loading}
-          className={`
-            px-3 py-1.5 rounded-lg border text-xs font-medium transition
-            ${s === status ? ACTIVE_STYLES[s] : STATUS_STYLES[s]}
-            ${loading ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
-          {STATUS_LABELS[s]}
-        </button>
-      ))}
+    <div>
+      <div className="flex gap-2">
+        {STATUSES.map((s) => (
+          <button
+            key={s}
+            onClick={() => handleStatusChange(s)}
+            disabled={loading}
+            className={`
+              flex-1 px-3 py-2.5 rounded-lg border text-xs font-medium transition
+              ${s === status ? ACTIVE_STYLES[s] : STATUS_STYLES[s]}
+              ${loading ? 'opacity-50 cursor-not-allowed' : ''}
+            `}
+          >
+            {STATUS_LABELS[s]}
+          </button>
+        ))}
+      </div>
+      {error && (
+        <p className="text-xs text-red-400 mt-2">{error}</p>
+      )}
     </div>
   );
 }

@@ -30,7 +30,7 @@ export default function TaskFilters({
             key={tab.key}
             onClick={() => onStatusChange(tab.key)}
             className={`
-              flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition
+              flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-md text-xs font-medium transition
               ${isActive
                 ? 'bg-fw-surface text-fw-text shadow-sm'
                 : 'text-fw-text/50 hover:text-fw-text'
@@ -41,7 +41,7 @@ export default function TaskFilters({
             <span
               className={`
                 text-[10px] tabular-nums
-                ${isActive ? 'text-fw-text/50' : 'text-fw-text/50'}
+                ${isActive ? 'text-fw-accent' : 'text-fw-text/30'}
               `}
             >
               {count}

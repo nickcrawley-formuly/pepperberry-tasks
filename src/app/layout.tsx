@@ -19,7 +19,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Pepperberry",
-  description: "Task management for Pepperberry, Coolongatta NSW",
+  description: "Task management for Pepperberry, Coolangatta NSW",
   manifest: "/manifest.json",
   icons: {
     icon: "/PBFlavicon.jpg",

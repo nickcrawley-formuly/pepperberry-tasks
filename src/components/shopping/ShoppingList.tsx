@@ -7,16 +7,17 @@ import { SHOPPING_CATEGORIES, SHOPPING_CATEGORY_LABELS } from '@/lib/constants';
 interface ShoppingListProps {
   initialItems: ShoppingItem[];
   admins: { id: string; name: string }[];
+  isAdmin: boolean;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  hardware: 'bg-blue-100 text-blue-700',
-  hay: 'bg-yellow-100 text-yellow-700',
-  feed: 'bg-green-100 text-green-700',
+  hardware: 'bg-blue-900/40 text-blue-400',
+  hay: 'bg-yellow-900/40 text-yellow-400',
+  feed: 'bg-green-900/40 text-green-400',
   other: 'bg-fw-bg text-fw-text/70',
 };
 
-export default function ShoppingList({ initialItems, admins }: ShoppingListProps) {
+export default function ShoppingList({ initialItems, admins, isAdmin }: ShoppingListProps) {
   const [items, setItems] = useState<ShoppingItem[]>(initialItems);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<string>('other');
@@ -24,7 +25,9 @@ export default function ShoppingList({ initialItems, admins }: ShoppingListProps
   const [filter, setFilter] = useState<string>('all');
   const [adding, setAdding] = useState(false);
 
-  const filtered = filter === 'all' ? items : items.filter((i) => i.category === filter);
+  const unbought = items.filter((i) => !i.is_bought);
+  const bought = items.filter((i) => i.is_bought);
+  const filtered = filter === 'all' ? unbought : unbought.filter((i) => i.category === filter);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -47,29 +50,60 @@ export default function ShoppingList({ initialItems, admins }: ShoppingListProps
     }
   }
 
+  async function handleToggleBought(id: string, currentlyBought: boolean) {
+    const res = await fetch(`/api/shopping/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_bought: !currentlyBought }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setItems((prev) => prev.map((i) => (i.id === id ? updated : i)));
+    }
+  }
+
   async function handleDelete(id: string) {
+    if (!confirm('Delete this item permanently?')) return;
     const res = await fetch(`/api/shopping/${id}`, { method: 'DELETE' });
     if (res.ok) {
       setItems((prev) => prev.filter((i) => i.id !== id));
     }
   }
 
+  async function handleClearBought() {
+    if (!confirm(`Remove all ${bought.length} bought items?`)) return;
+    for (const item of bought) {
+      await fetch(`/api/shopping/${item.id}`, { method: 'DELETE' });
+    }
+    setItems((prev) => prev.filter((i) => !i.is_bought));
+  }
+
   return (
     <div className="space-y-4">
       {/* Add item form */}
-      <form onSubmit={handleAdd} className="bg-fw-surface rounded-xl border border-fw-surface p-4">
-        <div className="flex gap-2">
+      <form onSubmit={handleAdd} className="bg-fw-surface rounded-xl border border-fw-text/10 p-4">
+        <div className="grid grid-cols-[1fr_auto] gap-2 sm:flex">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Add item..."
-            className="flex-1 rounded-lg border border-fw-surface px-3 py-2 text-sm text-fw-text bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition"
+            className="min-w-0 rounded-lg border border-fw-text/10 px-3 py-2.5 text-sm text-fw-text bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition"
           />
+          <button
+            type="submit"
+            disabled={!title.trim() || adding}
+            className="rounded-lg bg-fw-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-fw-hover active:bg-fw-hover transition disabled:opacity-40"
+          >
+            Add
+          </button>
+        </div>
+        <div className="grid grid-cols-2 gap-2 mt-2">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="rounded-lg border border-fw-surface px-2 py-2 text-sm text-fw-text/80 bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent transition"
+            aria-label="Category"
+            className="rounded-lg border border-fw-text/10 px-3 py-2.5 text-sm text-fw-text/80 bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent transition"
           >
             {SHOPPING_CATEGORIES.map((c) => (
               <option key={c} value={c}>{SHOPPING_CATEGORY_LABELS[c]}</option>
@@ -78,19 +112,13 @@ export default function ShoppingList({ initialItems, admins }: ShoppingListProps
           <select
             value={assignedTo}
             onChange={(e) => setAssignedTo(e.target.value)}
-            className="rounded-lg border border-fw-surface px-2 py-2 text-sm text-fw-text/80 bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent transition"
+            aria-label="Assigned buyer"
+            className="rounded-lg border border-fw-text/10 px-3 py-2.5 text-sm text-fw-text/80 bg-fw-surface focus:outline-none focus:ring-2 focus:ring-fw-accent transition"
           >
             {admins.map((a) => (
               <option key={a.id} value={a.id}>{a.name.split(' ')[0]}</option>
             ))}
           </select>
-          <button
-            type="submit"
-            disabled={!title.trim() || adding}
-            className="rounded-lg bg-fw-accent px-4 py-2 text-sm font-medium text-white hover:bg-fw-hover active:bg-fw-hover transition disabled:opacity-40"
-          >
-            Add
-          </button>
         </div>
       </form>
 
@@ -101,22 +129,22 @@ export default function ShoppingList({ initialItems, admins }: ShoppingListProps
             key={c}
             type="button"
             onClick={() => setFilter(c)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
+            className={`px-3 py-2.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
               filter === c
                 ? 'bg-fw-bg text-white'
-                : 'bg-fw-surface border border-fw-surface text-fw-text/70 hover:bg-fw-surface'
+                : 'bg-fw-surface border border-fw-text/10 text-fw-text/70 hover:bg-fw-surface'
             }`}
           >
             {c === 'all' ? 'All' : SHOPPING_CATEGORY_LABELS[c]}
             {c === 'all'
-              ? ` (${items.length})`
-              : ` (${items.filter((i) => i.category === c).length})`}
+              ? ` (${unbought.length})`
+              : ` (${unbought.filter((i) => i.category === c).length})`}
           </button>
         ))}
       </div>
 
       {/* Items list */}
-      <div className="bg-fw-surface rounded-xl border border-fw-surface divide-y divide-fw-surface">
+      <div className="bg-fw-surface rounded-xl border border-fw-text/10 divide-y divide-fw-text/10">
         {filtered.length === 0 && (
           <p className="p-8 text-center text-sm text-fw-text/40">No items yet</p>
         )}
@@ -125,10 +153,11 @@ export default function ShoppingList({ initialItems, admins }: ShoppingListProps
           <div key={item.id} className="flex items-center gap-3 px-4 py-3">
             <button
               type="button"
-              onClick={() => handleDelete(item.id)}
-              className="w-5 h-5 rounded border-2 border-fw-text/20 shrink-0 hover:border-emerald-500 hover:bg-emerald-500 transition flex items-center justify-center group"
+              onClick={() => handleToggleBought(item.id, false)}
+              className="w-6 h-6 rounded border-2 border-fw-text/20 shrink-0 hover:border-emerald-500 hover:bg-emerald-500 transition flex items-center justify-center group"
+              aria-label="Mark as bought"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-hover:opacity-100 transition">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-hover:opacity-100 transition">
                 <path d="M20 6L9 17l-5-5" />
               </svg>
             </button>
@@ -145,6 +174,53 @@ export default function ShoppingList({ initialItems, admins }: ShoppingListProps
           </div>
         ))}
       </div>
+
+      {/* Bought items */}
+      {bought.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium text-fw-text/40">Bought ({bought.length})</p>
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={handleClearBought}
+                className="text-xs text-fw-text/40 hover:text-red-400 transition"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+          <div className="bg-fw-surface rounded-xl border border-fw-text/10 divide-y divide-fw-text/10 opacity-60">
+            {bought.map((item) => (
+              <div key={item.id} className="flex items-center gap-3 px-4 py-3">
+                <button
+                  type="button"
+                  onClick={() => handleToggleBought(item.id, true)}
+                  className="w-6 h-6 rounded bg-emerald-500 shrink-0 hover:bg-emerald-400 transition flex items-center justify-center"
+                  aria-label="Unmark as bought"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                </button>
+                <p className="text-sm text-fw-text/50 line-through truncate flex-1">{item.title}</p>
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(item.id)}
+                    className="p-1.5 text-fw-text/30 hover:text-red-400 transition"
+                    aria-label="Delete item"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

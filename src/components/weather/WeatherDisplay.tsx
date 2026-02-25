@@ -131,8 +131,8 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
             <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
           <div>
-            <p className="text-sm font-medium text-amber-800">Heavy rain forecast</p>
-            <p className="text-xs text-fw-accent mt-0.5">
+            <p className="text-sm font-medium text-amber-300">Heavy rain forecast</p>
+            <p className="text-xs text-amber-200/70 mt-0.5">
               {heavyRainDays.map((d) => (
                 `${formatDayName(d.date)} ${Math.round(d.precipitationSum)} mm`
               )).join(', ')}
@@ -145,7 +145,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
       <div className="bg-fw-surface rounded-xl border border-fw-surface p-5">
         <div className="flex items-center justify-between">
           <div>
-            <span className={`text-4xl font-semibold ${current.temperature >= 30 ? 'text-red-600' : 'text-fw-text'}`}>
+            <span className={`text-4xl font-semibold ${current.temperature >= 30 ? 'text-red-400' : 'text-fw-text'}`}>
               {Math.round(current.temperature)}°
             </span>
             <p className="text-sm text-fw-text/50 mt-1">{current.condition.description}</p>
@@ -223,7 +223,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
                 <span className="w-8" />
               )}
               <span className={`text-xs w-14 text-right font-medium ${
-                day.precipitationSum > 0 ? 'text-sky-600' : 'text-fw-text/30'
+                day.precipitationSum > 0 ? 'text-sky-400' : 'text-fw-text/30'
               }`}>
                 {day.precipitationSum > 0 ? `${day.precipitationSum.toFixed(1)} mm` : '—'}
               </span>
@@ -310,7 +310,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
                       )}
                       {/* Rainfall label for 10mm+ days */}
                       {day.precipitationSum >= 10 && (
-                        <span className="text-[8px] text-sky-700 font-medium leading-none mb-0.5">
+                        <span className="text-[8px] text-sky-400 font-medium leading-none mb-0.5">
                           {Math.round(day.precipitationSum)}
                         </span>
                       )}
@@ -432,7 +432,7 @@ export default function WeatherDisplay({ data }: WeatherDisplayProps) {
           </div>
           <div className="ml-auto text-right">
             {data.ytdThisYear !== data.ytdLastYear && (
-              <p className={`text-sm font-medium ${data.ytdThisYear > data.ytdLastYear ? 'text-sky-600' : 'text-fw-accent'}`}>
+              <p className={`text-sm font-medium ${data.ytdThisYear > data.ytdLastYear ? 'text-sky-400' : 'text-fw-accent'}`}>
                 {data.ytdThisYear > data.ytdLastYear ? '+' : ''}{(data.ytdThisYear - data.ytdLastYear).toFixed(1)} mm
               </p>
             )}

@@ -6,6 +6,7 @@ export default function LogoutButton() {
   const router = useRouter();
 
   async function handleLogout() {
+    if (!confirm('Log out?')) return;
     await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/');
   }

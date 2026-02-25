@@ -60,8 +60,8 @@ export default async function ShoppingPage() {
             <h1 className="text-lg font-medium text-fw-text truncate">Need to Buy</h1>
           </div>
           <div className="flex-1" />
-          <div className="hidden sm:block text-right shrink-0">
-            <p className="text-sm font-medium text-fw-text">{session.name}</p>
+          <div className="text-right shrink-0">
+            <p className="text-sm font-medium text-fw-text hidden sm:block">{session.name}</p>
             {sessionExpiry && <SessionTimer expiresAt={sessionExpiry} />}
           </div>
           <UnreadBadges />
@@ -70,7 +70,7 @@ export default async function ShoppingPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
-        <ShoppingList initialItems={items} admins={admins} />
+        <ShoppingList initialItems={items} admins={admins} isAdmin={session.role === 'admin'} />
       </main>
     </div>
   );

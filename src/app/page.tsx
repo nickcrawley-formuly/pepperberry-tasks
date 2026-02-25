@@ -9,7 +9,7 @@ interface UserOption {
 
 export default function LoginPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<div className="min-h-screen bg-fw-bg" />}>
       <LoginForm />
     </Suspense>
   );
@@ -142,8 +142,8 @@ function LoginForm() {
 
         {/* Logged out message */}
         {loggedOut && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg bg-fw-surface border border-fw-surface px-4 py-3 text-sm text-fw-text/30">
-            <svg className="w-4 h-4 flex-shrink-0 text-fw-text/40" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-fw-surface border border-fw-surface px-4 py-3 text-sm text-fw-text/60">
+            <svg className="w-4 h-4 flex-shrink-0 text-fw-text/50" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
@@ -178,7 +178,7 @@ function LoginForm() {
                   className="w-full appearance-none rounded-lg border border-fw-surface bg-fw-surface px-4 py-3 text-sm text-fw-text focus:outline-none focus:ring-2 focus:ring-fw-accent/50 focus:border-fw-accent/50 transition disabled:opacity-50"
                 >
                   <option value="">
-                    {usersLoading ? 'Loading...' : 'Login as..'}
+                    {usersLoading ? 'Loading...' : 'Login as...'}
                   </option>
                   {users.map((u) => (
                     <option key={u.name} value={u.name}>

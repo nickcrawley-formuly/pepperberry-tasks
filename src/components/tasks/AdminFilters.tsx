@@ -44,7 +44,7 @@ export default function AdminFilters({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:flex-wrap">
         {/* Priority */}
         <div className="relative">
           <select

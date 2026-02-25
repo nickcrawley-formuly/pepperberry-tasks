@@ -63,8 +63,8 @@ export default async function EditTaskPage({
             <h1 className="text-lg font-medium text-fw-text truncate">Edit Job</h1>
           </div>
           <div className="flex-1" />
-          <div className="hidden sm:block text-right shrink-0">
-            <p className="text-sm font-medium text-fw-text">{session.name}</p>
+          <div className="text-right shrink-0">
+            <p className="text-sm font-medium text-fw-text hidden sm:block">{session.name}</p>
             {sessionExpiry && <SessionTimer expiresAt={sessionExpiry} />}
           </div>
           <UnreadBadges />

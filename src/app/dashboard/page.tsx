@@ -89,7 +89,7 @@ export default async function DashboardPage() {
           {session.role === 'admin' && (
               <Link
                 href="/tasks/new"
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
           )}
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
+            className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
           {(session.role === 'admin' || session.allowedSections?.includes('weather')) && (
             <Link
               href="/weather"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
           {(session.role === 'admin' || session.allowedSections?.includes('cart')) && (
             <Link
               href="/shopping"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +175,7 @@ export default async function DashboardPage() {
           {(session.role === 'admin' || session.allowedSections?.includes('chat')) && (
             <Link
               href="/chat"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +196,7 @@ export default async function DashboardPage() {
           {session.role === 'admin' && (
             <Link
               href="/admin/users"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

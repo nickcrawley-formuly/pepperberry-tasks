@@ -89,21 +89,25 @@ export default function CommentSection({ taskId, comments: initialComments }: Co
         <p className="text-xs text-fw-text/50 mb-4">No comments yet</p>
       )}
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input
-          type="text"
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Add a comment..."
-          className="flex-1 rounded-lg border border-fw-surface bg-fw-surface px-3 py-2 text-sm text-fw-text placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition"
+          rows={2}
+          maxLength={1000}
+          className="w-full rounded-lg border border-fw-text/10 bg-fw-surface px-3 py-2 text-sm text-fw-text placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition resize-none"
         />
-        <button
-          type="submit"
-          disabled={!content.trim() || loading}
-          className="px-4 py-2 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? '...' : 'Post'}
-        </button>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-fw-text/30">{content.length}/1000</span>
+          <button
+            type="submit"
+            disabled={!content.trim() || loading}
+            className="px-4 py-2 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? '...' : 'Post'}
+          </button>
+        </div>
       </form>
     </div>
   );

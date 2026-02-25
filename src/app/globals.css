@@ -3,9 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #fafaf9;
-  --foreground: #1c1917;
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html, body {
@@ -13,8 +11,8 @@ html, body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: #EDEDEE;
+  background: #1A1A1A;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 

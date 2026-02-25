@@ -12,7 +12,7 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         'fw-bg': '#1A1A1A',
-        'fw-surface': '#3D3F47',
+        'fw-surface': '#323233',
         'fw-text': '#EDEDEE',
         'fw-accent': '#5C8A2E',
         'fw-hover': '#3D6B1E',

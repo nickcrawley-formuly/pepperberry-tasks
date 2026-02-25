@@ -52,23 +52,23 @@ export default function ChatView({
   return (
     <div className="min-w-0 overflow-hidden">
       {/* Tabs */}
-      <div className="flex gap-1 mb-4 bg-fw-surface rounded-lg p-1">
+      <div className="flex gap-1 mb-4 bg-fw-bg rounded-lg p-1">
         <button
           onClick={() => setTab('board')}
-          className={`flex-1 py-2 text-sm font-medium rounded-md transition ${
+          className={`flex-1 py-2.5 text-sm font-medium rounded-md transition ${
             tab === 'board'
-              ? 'bg-fw-surface text-fw-text shadow-sm'
-              : 'text-fw-text/50 hover:text-fw-text/80'
+              ? 'bg-fw-surface text-fw-text'
+              : 'text-fw-text/40 hover:text-fw-text/70'
           }`}
         >
           Chatboard
         </button>
         <button
           onClick={() => setTab('messages')}
-          className={`flex-1 py-2 text-sm font-medium rounded-md transition ${
+          className={`flex-1 py-2.5 text-sm font-medium rounded-md transition ${
             tab === 'messages'
-              ? 'bg-fw-surface text-fw-text shadow-sm'
-              : 'text-fw-text/50 hover:text-fw-text/80'
+              ? 'bg-fw-surface text-fw-text'
+              : 'text-fw-text/40 hover:text-fw-text/70'
           }`}
         >
           Messages
@@ -459,7 +459,7 @@ function DMThread({
       <div className="flex items-center gap-3 pb-3 mb-3 border-b border-fw-surface">
         <button
           onClick={onBack}
-          className="text-fw-text/50 hover:text-fw-text/80 transition"
+          className="text-fw-text/50 hover:text-fw-text/80 transition p-2 -m-2"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />
