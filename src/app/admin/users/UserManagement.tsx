@@ -155,11 +155,12 @@ export default function UserManagement({ initialUsers, currentUserId, loginsByUs
 
 function formatLastLogin(dateStr: string): string {
   const date = new Date(dateStr);
-  const dayName = date.toLocaleDateString('en-AU', { weekday: 'long' });
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = String(date.getFullYear()).slice(-2);
-  return `${dayName} ${day}/${month}/${year}`;
+  const dayName = date.toLocaleDateString('en-AU', { weekday: 'long', timeZone: 'Australia/Sydney' });
+  const day = date.toLocaleDateString('en-AU', { day: 'numeric', timeZone: 'Australia/Sydney' });
+  const month = date.toLocaleDateString('en-AU', { month: 'numeric', timeZone: 'Australia/Sydney' });
+  const year = date.toLocaleDateString('en-AU', { year: '2-digit', timeZone: 'Australia/Sydney' });
+  const time = date.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Australia/Sydney' });
+  return `${dayName} ${day}/${month}/${year} at ${time}`;
 }
 
 /** Check if failed login counter is within the 7-day window */
