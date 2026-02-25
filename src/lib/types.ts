@@ -68,3 +68,28 @@ export interface ShoppingItem {
   adder?: { name: string } | null;
   assignee?: { name: string } | null;
 }
+
+export interface ChatMessage {
+  id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  user?: { name: string } | null;
+}
+
+export interface DirectMessage {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  content: string;
+  created_at: string;
+  sender?: { name: string } | null;
+  recipient?: { name: string } | null;
+}
+
+export interface Conversation {
+  user_id: string;
+  user_name: string;
+  last_message: string;
+  last_message_at: string;
+}

@@ -68,6 +68,8 @@ export async function POST(request: NextRequest) {
 
   if (!pinValid) {
     recordFailure(ip, now);
+    // Record failed attempt on the user record (auto-resets weekly)
+    recordUserFailure(user.id).catch(() => {});
     const entry2 = failedAttempts.get(ip);
     if (entry2 && entry2.count >= MAX_ATTEMPTS) {
       return NextResponse.json({ error: 'Too many attempts. Try again later.' }, { status: 429 });
@@ -119,6 +121,32 @@ function recordFailure(ip: string, now: number) {
     count,
     lockedUntil: count >= MAX_ATTEMPTS ? now + LOCKOUT_MS : 0,
   });
+}
+
+async function recordUserFailure(userId: string) {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: user } = await supabaseAdmin
+    .from('users')
+    .select('failed_login_count, failed_logins_since')
+    .eq('id', userId)
+    .single();
+
+  if (!user) return;
+
+  if (user.failed_logins_since < sevenDaysAgo) {
+    // Week expired — reset counter
+    await supabaseAdmin
+      .from('users')
+      .update({ failed_login_count: 1, failed_logins_since: new Date().toISOString() })
+      .eq('id', userId);
+  } else {
+    // Increment within current week
+    await supabaseAdmin
+      .from('users')
+      .update({ failed_login_count: (user.failed_login_count || 0) + 1 })
+      .eq('id', userId);
+  }
 }
 
 async function notifyNickOfLogin(loginName: string) {

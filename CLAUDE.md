@@ -161,6 +161,8 @@ The `supabaseAdmin` client in `src/lib/supabase/admin.ts` is configured with `ca
 | allowed_sections | text[] | Nullable. Non-admin section access, e.g. `['weather', 'cart', 'chat']` |
 | board_last_seen_at | timestamptz | Default `now()`. Tracks last viewed chatboard |
 | dm_last_seen_at | timestamptz | Default `now()`. Tracks last viewed DMs |
+| failed_login_count | integer | Default 0. Failed login attempts this week |
+| failed_logins_since | timestamptz | Default `now()`. Start of current 7-day failure window |
 | created_at | timestamptz | Default `now()` |
 
 ### `tasks`

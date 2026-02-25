@@ -21,7 +21,7 @@ export default async function AdminUsersPage() {
   const [{ data: rawUsers }, { data: loginData }] = await Promise.all([
     supabaseAdmin
       .from('users')
-      .select('id, name, role, trade_type, is_active, created_at, last_login, phone, allowed_sections')
+      .select('id, name, role, trade_type, is_active, created_at, last_login, phone, allowed_sections, failed_login_count, failed_logins_since')
       .order('name', { ascending: true }),
     supabaseAdmin
       .from('login_history')

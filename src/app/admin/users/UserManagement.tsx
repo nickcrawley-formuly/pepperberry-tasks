@@ -36,6 +36,8 @@ interface User {
   last_login: string | null;
   phone: string | null;
   allowed_sections: string[];
+  failed_login_count: number;
+  failed_logins_since: string;
 }
 
 interface UserManagementProps {
@@ -160,6 +162,13 @@ function formatLastLogin(dateStr: string): string {
   return `${dayName} ${day}/${month}/${year}`;
 }
 
+/** Check if failed login counter is within the 7-day window */
+function isFailedLoginsActive(sinceStr: string): boolean {
+  if (!sinceStr) return false;
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  return new Date(sinceStr).getTime() >= sevenDaysAgo;
+}
+
 /** Check if user logged in after the most recent midnight AEST (13:00 UTC) */
 function isLoggedInToday(lastLogin: string | null): boolean {
   if (!lastLogin) return false;
@@ -250,6 +259,18 @@ function UserRow({
                 ? `Last login: ${formatLastLogin(user.last_login)}`
                 : 'Never logged in'}
             </p>
+            {isFailedLoginsActive(user.failed_logins_since) && user.failed_login_count > 0 && (
+              <div className="flex items-center gap-1 mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <span className="text-xs font-medium text-red-500">
+                  {user.failed_login_count} failed login{user.failed_login_count !== 1 ? 's' : ''} this week
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
