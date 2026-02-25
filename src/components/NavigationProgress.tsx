@@ -47,7 +47,7 @@ export default function NavigationProgress() {
         <div className="h-full bg-fw-accent animate-progress-bar" />
       </div>
       {/* Full overlay spinner after a moment */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-fw-bg/60 backdrop-blur-sm animate-fade-in">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-fw-bg/80 animate-fade-in">
         <svg
           className="w-10 h-10 animate-spin text-fw-accent"
           fill="none"

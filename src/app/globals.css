@@ -6,11 +6,15 @@
   color-scheme: dark;
 }
 
-html, body {
+html {
   overflow-x: clip;
 }
 
 body {
+  overflow-x: clip;
+  max-width: 100vw;
+  overflow-wrap: break-word;
+  word-break: break-word;
   color: #EDEDEE;
   background: #1A1A1A;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
