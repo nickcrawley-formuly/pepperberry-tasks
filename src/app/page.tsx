@@ -27,7 +27,7 @@ function LoginForm() {
   const [usersLoading, setUsersLoading] = useState(true);
   const [forgotPinSent, setForgotPinSent] = useState(false);
   const [forgotPinLoading, setForgotPinLoading] = useState(false);
-  const [geoLocation, setGeoLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const geoRef = useRef<{ lat: number; lng: number } | null>(null);
   const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -103,6 +103,24 @@ function LoginForm() {
     setError('');
     setLoading(true);
 
+    // Try to get location if we don't have it yet (quick 3s attempt)
+    let loc = geoRef.current;
+    if (!loc && navigator.geolocation) {
+      loc = await new Promise<{ lat: number; lng: number } | null>((resolve) => {
+        const timer = setTimeout(() => resolve(null), 3000);
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            clearTimeout(timer);
+            const result = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            geoRef.current = result;
+            resolve(result);
+          },
+          () => { clearTimeout(timer); resolve(null); },
+          { timeout: 3000, maximumAge: 60000 }
+        );
+      });
+    }
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -110,8 +128,8 @@ function LoginForm() {
         body: JSON.stringify({
           name: selectedUser,
           pin: fullPin,
-          latitude: geoLocation?.lat ?? null,
-          longitude: geoLocation?.lng ?? null,
+          latitude: loc?.lat ?? null,
+          longitude: loc?.lng ?? null,
         }),
       });
 
@@ -182,7 +200,9 @@ function LoginForm() {
                       setTimeout(() => pinRefs.current[0]?.focus(), 50);
                       if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
-                          (pos) => setGeoLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                          (pos) => {
+                            geoRef.current = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                          },
                           () => {},
                           { timeout: 10000, maximumAge: 60000 }
                         );
