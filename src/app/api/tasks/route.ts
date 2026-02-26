@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getSession } from '@/lib/auth';
-import { CATEGORIES, LOCATIONS, PRIORITIES, RECURRENCE_PATTERNS } from '@/lib/constants';
+import { CATEGORIES, LOCATIONS, PRIORITIES, RECURRENCE_PATTERNS, AREAS, MAX_SUBTASKS } from '@/lib/constants';
 import { sendPushToUser } from '@/lib/notifications';
 import { logActivity } from '@/lib/activity';
 
@@ -53,11 +53,13 @@ export async function POST(request: NextRequest) {
     priority,
     category,
     location,
+    area,
     assigned_to,
     due_date,
     recurrence_pattern,
     recurrence_start,
     recurrence_end,
+    subtasks,
   } = body;
 
   if (!title?.trim()) {
@@ -71,6 +73,12 @@ export async function POST(request: NextRequest) {
   }
   if (priority && !PRIORITIES.includes(priority)) {
     return NextResponse.json({ error: 'Invalid priority' }, { status: 400 });
+  }
+  if (area && !AREAS.includes(area)) {
+    return NextResponse.json({ error: 'Invalid area' }, { status: 400 });
+  }
+  if (subtasks && (!Array.isArray(subtasks) || subtasks.length > MAX_SUBTASKS)) {
+    return NextResponse.json({ error: `Maximum ${MAX_SUBTASKS} sub-tasks allowed` }, { status: 400 });
   }
 
   // Repeating task
@@ -99,6 +107,7 @@ export async function POST(request: NextRequest) {
       priority: priority || 'medium',
       category,
       location,
+      area: area || null,
       assigned_to: assigned_to || null,
       created_by: session.userId,
       due_date: date,
@@ -115,6 +124,21 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Error creating recurring tasks:', error);
       return NextResponse.json({ error: 'Failed to create tasks' }, { status: 500 });
+    }
+
+    // Insert subtasks for each task in the series
+    if (tasks && tasks.length > 0 && subtasks && subtasks.length > 0) {
+      const validSubtasks = subtasks.filter((s: { title: string }) => s.title?.trim());
+      if (validSubtasks.length > 0) {
+        const subtaskRows = tasks.flatMap((t) =>
+          validSubtasks.map((s: { title: string; sort_order?: number }, i: number) => ({
+            task_id: t.id,
+            title: s.title.trim(),
+            sort_order: s.sort_order ?? i,
+          }))
+        );
+        await supabaseAdmin.from('task_subtasks').insert(subtaskRows);
+      }
     }
 
     // Log activity for each task in the series
@@ -151,6 +175,7 @@ export async function POST(request: NextRequest) {
       priority: priority || 'medium',
       category,
       location,
+      area: area || null,
       assigned_to: assigned_to || null,
       created_by: session.userId,
       due_date: due_date || null,
@@ -161,6 +186,19 @@ export async function POST(request: NextRequest) {
   if (error) {
     console.error('Error creating task:', error);
     return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });
+  }
+
+  // Insert subtasks for one-off task
+  if (task && subtasks && subtasks.length > 0) {
+    const validSubtasks = subtasks.filter((s: { title: string }) => s.title?.trim());
+    if (validSubtasks.length > 0) {
+      const subtaskRows = validSubtasks.map((s: { title: string; sort_order?: number }, i: number) => ({
+        task_id: task.id,
+        title: s.title.trim(),
+        sort_order: s.sort_order ?? i,
+      }));
+      await supabaseAdmin.from('task_subtasks').insert(subtaskRows);
+    }
   }
 
   if (task) {

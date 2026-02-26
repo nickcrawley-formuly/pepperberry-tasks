@@ -24,6 +24,45 @@ interface TaskListProps {
   users?: UserOption[];
 }
 
+interface TimeBucket {
+  key: string;
+  label: string;
+  accent?: string;
+  tasks: Task[];
+}
+
+function startOfToday(): Date {
+  return new Date(new Date().toDateString());
+}
+
+function addDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function sortTasks(tasks: Task[], isAdmin: boolean): Task[] {
+  return [...tasks].sort((a, b) => {
+    // Urgent first
+    const aUrgent = a.priority === 'urgent' ? 1 : 0;
+    const bUrgent = b.priority === 'urgent' ? 1 : 0;
+    if (aUrgent !== bUrgent) return bUrgent - aUrgent;
+
+    if (!isAdmin) {
+      const pw = (PRIORITY_WEIGHT[b.priority] ?? 0) - (PRIORITY_WEIGHT[a.priority] ?? 0);
+      if (pw !== 0) return pw;
+    }
+
+    // Due date: soonest first, nulls last
+    if (a.due_date && b.due_date) {
+      return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+    }
+    if (a.due_date) return -1;
+    if (b.due_date) return 1;
+    return 0;
+  });
+}
+
 export default function TaskList({ tasks, role, users = [] }: TaskListProps) {
   const [activeStatus, setActiveStatus] = useState('all');
   const [adminFilters, setAdminFilters] = useState<AdminFilterValues>({
@@ -32,18 +71,17 @@ export default function TaskList({ tasks, role, users = [] }: TaskListProps) {
     location: '',
     assignedTo: '',
   });
+  const [collapsedBuckets, setCollapsedBuckets] = useState<Record<string, boolean>>({});
 
   const isAdmin = role === 'admin';
 
   const filtered = useMemo(() => {
     let result = tasks;
 
-    // Status filter (all roles)
     if (activeStatus !== 'all') {
       result = result.filter((t) => t.status === activeStatus);
     }
 
-    // Admin-only filters
     if (isAdmin) {
       if (adminFilters.priority) {
         result = result.filter((t) => t.priority === adminFilters.priority);
@@ -65,30 +103,48 @@ export default function TaskList({ tasks, role, users = [] }: TaskListProps) {
       }
     }
 
-    // Sort: urgent tasks always first, then priority-based for workers
-    result = [...result].sort((a, b) => {
-      // Urgent tasks always come first
-      const aUrgent = a.priority === 'urgent' ? 1 : 0;
-      const bUrgent = b.priority === 'urgent' ? 1 : 0;
-      if (aUrgent !== bUrgent) return bUrgent - aUrgent;
-
-      // For non-admin, also sort by remaining priority levels
-      if (!isAdmin) {
-        const pw = (PRIORITY_WEIGHT[b.priority] ?? 0) - (PRIORITY_WEIGHT[a.priority] ?? 0);
-        if (pw !== 0) return pw;
-      }
-
-      // Due date: soonest first, nulls last
-      if (a.due_date && b.due_date) {
-        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-      }
-      if (a.due_date) return -1;
-      if (b.due_date) return 1;
-      return 0;
-    });
-
     return result;
   }, [tasks, activeStatus, adminFilters, isAdmin]);
+
+  const buckets = useMemo((): TimeBucket[] => {
+    const today = startOfToday();
+    const tomorrow = addDays(today, 1);
+    const in3days = addDays(today, 3);
+    const in2weeks = addDays(today, 14);
+
+    const overdue: Task[] = [];
+    const todayBucket: Task[] = [];
+    const next3: Task[] = [];
+    const within2w: Task[] = [];
+    const later: Task[] = [];
+
+    for (const t of filtered) {
+      if (!t.due_date) {
+        later.push(t);
+        continue;
+      }
+      const due = new Date(t.due_date + 'T00:00:00');
+      if (t.status !== 'done' && due < today) {
+        overdue.push(t);
+      } else if (due >= today && due < tomorrow) {
+        todayBucket.push(t);
+      } else if (due >= tomorrow && due < in3days) {
+        next3.push(t);
+      } else if (due >= in3days && due < in2weeks) {
+        within2w.push(t);
+      } else {
+        later.push(t);
+      }
+    }
+
+    return [
+      { key: 'overdue', label: 'Overdue', accent: 'text-red-500', tasks: sortTasks(overdue, isAdmin) },
+      { key: 'today', label: 'Today', tasks: sortTasks(todayBucket, isAdmin) },
+      { key: 'next3', label: 'Next 3 Days', tasks: sortTasks(next3, isAdmin) },
+      { key: 'within2w', label: 'Within 2 Weeks', tasks: sortTasks(within2w, isAdmin) },
+      { key: 'later', label: 'Later', tasks: sortTasks(later, isAdmin) },
+    ].filter((b) => b.tasks.length > 0);
+  }, [filtered, isAdmin]);
 
   const counts = {
     all: tasks.length,
@@ -96,6 +152,10 @@ export default function TaskList({ tasks, role, users = [] }: TaskListProps) {
     in_progress: tasks.filter((t) => t.status === 'in_progress').length,
     done: tasks.filter((t) => t.status === 'done').length,
   };
+
+  function toggleBucket(key: string) {
+    setCollapsedBuckets((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
 
   return (
     <div>
@@ -115,8 +175,8 @@ export default function TaskList({ tasks, role, users = [] }: TaskListProps) {
         counts={counts}
       />
 
-      <div className="mt-4 space-y-3">
-        {filtered.length === 0 ? (
+      <div className="mt-4 space-y-4">
+        {buckets.length === 0 ? (
           tasks.length === 0 ? (
             <div className="text-center py-16">
               <svg
@@ -155,7 +215,43 @@ export default function TaskList({ tasks, role, users = [] }: TaskListProps) {
             </div>
           )
         ) : (
-          filtered.map((task) => <TaskCard key={task.id} task={task} />)
+          buckets.map((bucket) => (
+            <div key={bucket.key}>
+              <button
+                type="button"
+                onClick={() => toggleBucket(bucket.key)}
+                className="flex items-center gap-2 w-full text-left mb-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`text-fw-text/40 transition-transform ${collapsedBuckets[bucket.key] ? '-rotate-90' : ''}`}
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+                <span className={`text-xs font-semibold uppercase tracking-wider ${bucket.accent || 'text-fw-text/50'}`}>
+                  {bucket.label}
+                </span>
+                <span className="text-xs text-fw-text/30">
+                  {bucket.tasks.length}
+                </span>
+              </button>
+              {!collapsedBuckets[bucket.key] && (
+                <div className="space-y-2">
+                  {bucket.tasks.map((task) => (
+                    <TaskCard key={task.id} task={task} />
+                  ))}
+                </div>
+              )}
+            </div>
+          ))
         )}
       </div>
     </div>

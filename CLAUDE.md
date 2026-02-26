@@ -180,9 +180,20 @@ The `supabaseAdmin` client in `src/lib/supabase/admin.ts` is configured with `ca
 | due_date | date | Nullable |
 | recurrence_pattern | text | Nullable. `daily`, `weekly`, `fortnightly`, `monthly` |
 | recurrence_group_id | uuid | Nullable. Groups recurring task instances |
+| area | text | Nullable. `garden`, `paddocks`, `house`, `animals` |
 | completed_at | timestamptz | Nullable, auto-set when status → `done` |
 | created_at | timestamptz | Default `now()` |
 | updated_at | timestamptz | Default `now()`, update via trigger |
+
+### `task_subtasks`
+| Column | Type | Notes |
+|--------|------|-------|
+| id | uuid | PK, default `gen_random_uuid()` |
+| task_id | uuid | FK → `tasks.id`, cascade delete |
+| title | text | Subtask label |
+| is_done | boolean | Default false |
+| sort_order | integer | Default 0 |
+| created_at | timestamptz | Default `now()` |
 
 ### `task_photos`
 | Column | Type | Notes |

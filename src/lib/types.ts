@@ -17,6 +17,7 @@ export interface Task {
   priority: 'low' | 'medium' | 'high' | 'urgent';
   category: string;
   location: string;
+  area: string | null;
   assigned_to: string | null;
   created_by: string;
   due_date: string | null;
@@ -27,6 +28,17 @@ export interface Task {
   updated_at: string;
   assigned_user?: { name: string } | null;
   created_user?: { name: string } | null;
+  subtask_total?: number;
+  subtask_done?: number;
+}
+
+export interface TaskSubtask {
+  id: string;
+  task_id: string;
+  title: string;
+  is_done: boolean;
+  sort_order: number;
+  created_at: string;
 }
 
 export interface TaskPhoto {

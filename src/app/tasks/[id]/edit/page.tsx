@@ -28,6 +28,12 @@ export default async function EditTaskPage({
 
   if (error || !task) notFound();
 
+  const { data: subtasks } = await supabaseAdmin
+    .from('task_subtasks')
+    .select('*')
+    .eq('task_id', id)
+    .order('sort_order', { ascending: true });
+
   const { data: users } = await supabaseAdmin
     .from('users')
     .select('id, name, role, trade_type')
@@ -73,7 +79,7 @@ export default async function EditTaskPage({
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
-        <EditTaskForm task={task} users={users || []} />
+        <EditTaskForm task={task} users={users || []} subtasks={subtasks || []} />
       </main>
     </div>
   );

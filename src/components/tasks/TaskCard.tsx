@@ -1,23 +1,22 @@
 import Link from 'next/link';
 import { Task } from '@/lib/types';
 import {
-  STATUS_LABELS,
-  PRIORITY_LABELS,
-  CATEGORY_LABELS,
   LOCATION_LABELS,
+  AREA_LABELS,
 } from '@/lib/constants';
 
-const STATUS_STYLES: Record<string, string> = {
-  todo: 'bg-fw-bg text-fw-text/80',
-  in_progress: 'bg-fw-accent/10 text-fw-accent',
-  done: 'bg-emerald-900/30 text-emerald-600',
+const PRIORITY_DOT: Record<string, string> = {
+  low: 'bg-stone-500',
+  medium: 'bg-stone-400',
+  high: 'bg-orange-500',
+  urgent: 'bg-red-500',
 };
 
-const PRIORITY_STYLES: Record<string, string> = {
-  low: 'text-fw-text/50',
-  medium: 'text-fw-text/80',
-  high: 'text-orange-500',
-  urgent: 'text-red-500 font-semibold',
+const AREA_STRIPE: Record<string, string> = {
+  garden: 'bg-emerald-500',
+  paddocks: 'bg-amber-600',
+  house: 'bg-sky-500',
+  animals: 'bg-purple-500',
 };
 
 function formatDate(dateStr: string | null): string {
@@ -37,81 +36,63 @@ function isOverdue(task: Task): boolean {
 export default function TaskCard({ task }: { task: Task }) {
   const overdue = isOverdue(task);
   const isUrgent = task.priority === 'urgent';
+  const stripe = task.area ? AREA_STRIPE[task.area] || 'bg-fw-text/20' : 'bg-fw-text/20';
 
   return (
     <Link
       href={`/tasks/${task.id}`}
-      className={`block rounded-xl border p-5 transition ${
+      className={`block rounded-xl border transition overflow-hidden ${
         isUrgent
-          ? 'bg-red-900/30 border-red-500/30 border-l-4 border-l-red-500 hover:border-red-400'
+          ? 'bg-red-900/30 border-red-500/30 hover:border-red-400'
           : 'bg-fw-surface border-fw-surface hover:border-fw-text/30'
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <h3 className={`text-sm font-medium leading-snug ${task.status === 'done' ? 'line-through text-fw-text/50' : 'text-fw-text'}`}>
-            {isUrgent && (
-              <span className="inline-block bg-red-500 text-white text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded mr-1.5 align-middle">
-                Urgent
+      <div className="flex">
+        {/* Area color stripe */}
+        <div className={`w-1.5 shrink-0 ${stripe}`} />
+
+        <div className="flex-1 min-w-0 p-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <h3 className={`text-sm font-medium leading-snug ${task.status === 'done' ? 'line-through text-fw-text/50' : 'text-fw-text'}`}>
+                {isUrgent && (
+                  <span className="inline-block bg-red-500 text-white text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded mr-1.5 align-middle">
+                    Urgent
+                  </span>
+                )}
+                {task.title}
+              </h3>
+            </div>
+            {/* Priority dot */}
+            <span className={`w-2.5 h-2.5 rounded-full shrink-0 mt-1 ${PRIORITY_DOT[task.priority]}`} />
+          </div>
+
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-fw-text/50">
+            {task.area && (
+              <span>{AREA_LABELS[task.area]}</span>
+            )}
+            <span>{LOCATION_LABELS[task.location] || task.location}</span>
+            {task.assigned_user?.name && (
+              <span>{task.assigned_user.name}</span>
+            )}
+            {task.due_date && (
+              <span className={overdue ? 'text-red-500 font-medium' : ''}>
+                {task.recurrence_pattern && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="inline-block mr-0.5 -mt-0.5">
+                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+                    <path d="M21 3v5h-5" />
+                  </svg>
+                )}
+                {formatDate(task.due_date)}
               </span>
             )}
-            {task.title}
-          </h3>
-          {task.description && (
-            <p className="mt-1 text-xs text-fw-text/50 line-clamp-2">
-              {task.description}
-            </p>
-          )}
-        </div>
-        <span
-          className={`shrink-0 text-[11px] font-medium px-2.5 py-1 rounded-full ${STATUS_STYLES[task.status]}`}
-        >
-          {STATUS_LABELS[task.status]}
-        </span>
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px]">
-        <span className={PRIORITY_STYLES[task.priority]}>
-          {PRIORITY_LABELS[task.priority]}
-        </span>
-
-        <span className="text-fw-text/50">
-          {LOCATION_LABELS[task.location] || task.location}
-        </span>
-
-        <span className="text-fw-text/50">
-          {CATEGORY_LABELS[task.category] || task.category}
-        </span>
-
-        {task.assigned_user?.name && (
-          <span className="text-fw-text/50">
-            {task.assigned_user.name}
-          </span>
-        )}
-
-        {task.due_date && (
-          <span className={overdue ? 'text-red-500 font-medium' : 'text-fw-text/50'}>
-            {task.recurrence_pattern && (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="inline-block mr-0.5 -mt-0.5"
-              >
-                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-                <path d="M21 3v5h-5" />
-              </svg>
+            {(task.subtask_total ?? 0) > 0 && (
+              <span className="text-fw-accent font-medium">
+                {task.subtask_done ?? 0}/{task.subtask_total}
+              </span>
             )}
-            {overdue ? 'Overdue — ' : 'Due '}
-            {formatDate(task.due_date)}
-          </span>
-        )}
+          </div>
+        </div>
       </div>
     </Link>
   );

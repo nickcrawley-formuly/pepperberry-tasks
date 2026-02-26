@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  CATEGORIES,
-  LOCATIONS,
+  AREAS,
+  AREA_LABELS,
+  AREA_LOCATIONS,
+  AREA_CATEGORIES,
   PRIORITIES,
   STATUSES,
   CATEGORY_LABELS,
@@ -12,6 +14,9 @@ import {
   PRIORITY_LABELS,
   STATUS_LABELS,
   RECURRENCE_LABELS,
+  MAX_SUBTASKS,
+  CATEGORIES,
+  LOCATIONS,
 } from '@/lib/constants';
 
 interface TaskData {
@@ -22,9 +27,17 @@ interface TaskData {
   priority: string;
   category: string;
   location: string;
+  area: string | null;
   assigned_to: string | null;
   due_date: string | null;
   recurrence_pattern: string | null;
+}
+
+interface SubtaskData {
+  id: string;
+  title: string;
+  is_done: boolean;
+  sort_order: number;
 }
 
 interface UserOption {
@@ -37,9 +50,10 @@ interface UserOption {
 interface EditTaskFormProps {
   task: TaskData;
   users: UserOption[];
+  subtasks: SubtaskData[];
 }
 
-export default function EditTaskForm({ task, users }: EditTaskFormProps) {
+export default function EditTaskForm({ task, users, subtasks: initialSubtasks }: EditTaskFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,8 +64,43 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
   const [priority, setPriority] = useState(task.priority);
   const [category, setCategory] = useState(task.category);
   const [location, setLocation] = useState(task.location);
+  const [area, setArea] = useState(task.area || '');
   const [assignedTo, setAssignedTo] = useState(task.assigned_to || '');
   const [dueDate, setDueDate] = useState(task.due_date || '');
+
+  // Subtask editing: track existing (with id) and new ones
+  const [subtasks, setSubtasks] = useState<{ id?: string; title: string }[]>(
+    initialSubtasks.map((s) => ({ id: s.id, title: s.title }))
+  );
+
+  const filteredLocations = area ? AREA_LOCATIONS[area] || [] : LOCATIONS;
+  const filteredCategories = area ? AREA_CATEGORIES[area] || [] : CATEGORIES;
+
+  function handleAreaChange(newArea: string) {
+    setArea(newArea);
+    if (newArea) {
+      const locs = AREA_LOCATIONS[newArea] || [];
+      const cats = AREA_CATEGORIES[newArea] || [];
+      if (!locs.includes(location)) setLocation('');
+      if (!cats.includes(category)) setCategory('');
+    }
+  }
+
+  function addSubtask() {
+    if (subtasks.length < MAX_SUBTASKS) {
+      setSubtasks([...subtasks, { title: '' }]);
+    }
+  }
+
+  function updateSubtask(index: number, value: string) {
+    const updated = [...subtasks];
+    updated[index] = { ...updated[index], title: value };
+    setSubtasks(updated);
+  }
+
+  function removeSubtask(index: number) {
+    setSubtasks(subtasks.filter((_, i) => i !== index));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,8 +118,12 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
           priority,
           category,
           location,
+          area: area || null,
           assigned_to: assignedTo || null,
           due_date: dueDate || null,
+          subtasks: subtasks
+            .filter((s) => s.title.trim())
+            .map((s, i) => ({ id: s.id, title: s.title.trim(), sort_order: i })),
         }),
       });
 
@@ -131,6 +184,27 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
         </div>
       </div>
 
+      {/* Area selector */}
+      <div className="bg-fw-surface rounded-xl border border-fw-surface p-5 space-y-3">
+        <p className={labelClass}>Area</p>
+        <div className="grid grid-cols-4 gap-2">
+          {AREAS.map((a) => (
+            <button
+              key={a}
+              type="button"
+              onClick={() => handleAreaChange(area === a ? '' : a)}
+              className={`px-3 py-2 rounded-lg text-xs font-medium transition text-center ${
+                area === a
+                  ? 'bg-fw-accent/20 border border-fw-accent text-fw-accent'
+                  : 'border border-fw-text/20 text-fw-text/70 hover:border-fw-accent'
+              }`}
+            >
+              {AREA_LABELS[a]}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="bg-fw-surface rounded-xl border border-fw-surface p-5 space-y-5">
         {/* Status & Priority */}
         <div className="grid grid-cols-2 gap-4">
@@ -163,7 +237,7 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
           </div>
         </div>
 
-        {/* Category & Location */}
+        {/* Category & Location (filtered by area) */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="category" className={labelClass}>Category *</label>
@@ -174,7 +248,8 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
               required
               className={selectFilled}
             >
-              {CATEGORIES.map((c) => (
+              <option value="">Select...</option>
+              {filteredCategories.map((c) => (
                 <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
               ))}
             </select>
@@ -189,7 +264,8 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
               required
               className={selectFilled}
             >
-              {LOCATIONS.map((l) => (
+              <option value="">Select...</option>
+              {filteredLocations.map((l) => (
                 <option key={l} value={l}>{LOCATION_LABELS[l]}</option>
               ))}
             </select>
@@ -229,6 +305,49 @@ export default function EditTaskForm({ task, users }: EditTaskFormProps) {
             />
           </div>
         </div>
+      </div>
+
+      {/* Sub-tasks */}
+      <div className="bg-fw-surface rounded-xl border border-fw-surface p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium text-fw-text/50">Sub-tasks</p>
+          <span className="text-xs text-fw-text/40">{subtasks.length}/{MAX_SUBTASKS}</span>
+        </div>
+
+        {subtasks.map((st, i) => (
+          <div key={st.id || `new-${i}`} className="flex items-center gap-2">
+            <span className="text-xs text-fw-text/30 w-5 text-center">{i + 1}</span>
+            <input
+              type="text"
+              value={st.title}
+              onChange={(e) => updateSubtask(i, e.target.value)}
+              placeholder="Sub-task description..."
+              className={`${inputClass} flex-1`}
+            />
+            <button
+              type="button"
+              onClick={() => removeSubtask(i)}
+              className="p-1.5 text-fw-text/30 hover:text-red-500 transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
+        ))}
+
+        {subtasks.length < MAX_SUBTASKS && (
+          <button
+            type="button"
+            onClick={addSubtask}
+            className="flex items-center gap-2 text-sm text-fw-accent hover:text-fw-hover transition"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14" /><path d="M12 5v14" />
+            </svg>
+            Add sub-task
+          </button>
+        )}
       </div>
 
       {error && (

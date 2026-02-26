@@ -2,12 +2,13 @@ import { getSession, getSessionExpiry } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Task, TaskComment, TaskPhoto, TaskActivity } from '@/lib/types';
+import { Task, TaskComment, TaskPhoto, TaskActivity, TaskSubtask } from '@/lib/types';
 import {
   PRIORITY_LABELS,
   CATEGORY_LABELS,
   LOCATION_LABELS,
   RECURRENCE_LABELS,
+  AREA_LABELS,
 } from '@/lib/constants';
 import StatusUpdater from '@/components/tasks/StatusUpdater';
 import CommentSection from '@/components/tasks/CommentSection';
@@ -16,6 +17,7 @@ import DeleteSeriesButton from '@/components/tasks/DeleteSeriesButton';
 import PhotoSection from '@/components/tasks/PhotoSection';
 import ActivityLog from '@/components/tasks/ActivityLog';
 import TransferTask from '@/components/tasks/TransferTask';
+import SubtaskChecklist from '@/components/tasks/SubtaskChecklist';
 import SessionTimer from '@/components/SessionTimer';
 import LogoutButton from '@/components/LogoutButton';
 import UnreadBadges from '@/components/UnreadBadges';
@@ -97,6 +99,15 @@ export default async function TaskDetailPage({
     .order('created_at', { ascending: true });
 
   const typedActivities = (activities || []) as unknown as TaskActivity[];
+
+  // Fetch subtasks
+  const { data: subtasks } = await supabaseAdmin
+    .from('task_subtasks')
+    .select('*')
+    .eq('task_id', id)
+    .order('sort_order', { ascending: true });
+
+  const typedSubtasks = (subtasks || []) as TaskSubtask[];
 
   // Fetch active users for transfer dropdown
   const { data: activeUsers } = await supabaseAdmin
@@ -217,6 +228,15 @@ export default async function TaskDetailPage({
               </p>
             </div>
 
+            {typedTask.area && (
+              <div>
+                <p className="text-xs text-fw-text/50 mb-0.5">Area</p>
+                <p className="text-sm text-fw-text">
+                  {AREA_LABELS[typedTask.area] || typedTask.area}
+                </p>
+              </div>
+            )}
+
             <div>
               <p className="text-xs text-fw-text/50 mb-0.5">Location</p>
               <p className="text-sm text-fw-text">
@@ -272,6 +292,13 @@ export default async function TaskDetailPage({
             )}
           </div>
         </div>
+
+        {/* Sub-tasks */}
+        {typedSubtasks.length > 0 && (
+          <div className="bg-fw-surface rounded-xl border border-fw-surface p-5">
+            <SubtaskChecklist taskId={typedTask.id} subtasks={typedSubtasks} />
+          </div>
+        )}
 
         {/* Photos */}
         <div className="bg-fw-surface rounded-xl border border-fw-surface p-5">

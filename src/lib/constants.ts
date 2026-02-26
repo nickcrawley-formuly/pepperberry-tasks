@@ -57,6 +57,31 @@ export const RECURRENCE_LABELS: Record<string, string> = {
   monthly: 'Monthly',
 };
 
+export const AREAS = ['garden', 'paddocks', 'house', 'animals'] as const;
+
+export const AREA_LABELS: Record<string, string> = {
+  garden: 'Garden',
+  paddocks: 'Paddocks',
+  house: 'House',
+  animals: 'Animals',
+};
+
+export const AREA_LOCATIONS: Record<string, readonly string[]> = {
+  garden: ['Front_garden', 'Back_garden', 'VegetablePatch'],
+  paddocks: ['Big_Paddock', 'Front_paddock', 'Back_paddock', 'riding_arena', 'stables', 'front_gate'],
+  house: ['house', 'workshop', 'driveway'],
+  animals: ['stables', 'Big_Paddock', 'Front_paddock', 'Back_paddock'],
+};
+
+export const AREA_CATEGORIES: Record<string, readonly string[]> = {
+  garden: ['maintenance', 'general'],
+  paddocks: ['fencing', 'riding_school', 'maintenance', 'general'],
+  house: ['maintenance', 'general'],
+  animals: ['horses', 'donkeys', 'riding_school'],
+};
+
+export const MAX_SUBTASKS = 5;
+
 export const MAX_PHOTOS_PER_TASK = 5;
 export const MAX_PHOTO_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 export const ACCEPTED_IMAGE_TYPES = [

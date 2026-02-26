@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { getSession } from '@/lib/auth';
-import { CATEGORIES, LOCATIONS, PRIORITIES, STATUSES, STATUS_LABELS } from '@/lib/constants';
+import { CATEGORIES, LOCATIONS, PRIORITIES, STATUSES, STATUS_LABELS, AREAS, MAX_SUBTASKS } from '@/lib/constants';
 import { sendPushToUser, notifyUsersExcluding } from '@/lib/notifications';
 import { logActivity } from '@/lib/activity';
 
@@ -112,6 +112,12 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     }
     updates.location = body.location;
   }
+  if (body.area !== undefined) {
+    if (body.area && !AREAS.includes(body.area)) {
+      return NextResponse.json({ error: 'Invalid area' }, { status: 400 });
+    }
+    updates.area = body.area || null;
+  }
   if (body.assigned_to !== undefined) {
     updates.assigned_to = body.assigned_to || null;
   }
@@ -130,6 +136,26 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   if (updateError) {
     return NextResponse.json({ error: 'Failed to update task' }, { status: 500 });
+  }
+
+  // Handle subtask updates if provided
+  if (body.subtasks !== undefined && Array.isArray(body.subtasks)) {
+    if (body.subtasks.length > MAX_SUBTASKS) {
+      return NextResponse.json({ error: `Maximum ${MAX_SUBTASKS} sub-tasks allowed` }, { status: 400 });
+    }
+
+    // Delete all existing subtasks and re-insert
+    await supabaseAdmin.from('task_subtasks').delete().eq('task_id', id);
+
+    const validSubtasks = body.subtasks.filter((s: { title: string }) => s.title?.trim());
+    if (validSubtasks.length > 0) {
+      const subtaskRows = validSubtasks.map((s: { title: string; sort_order?: number }, i: number) => ({
+        task_id: id,
+        title: s.title.trim(),
+        sort_order: s.sort_order ?? i,
+      }));
+      await supabaseAdmin.from('task_subtasks').insert(subtaskRows);
+    }
   }
 
   // Log activity for each changed field
