@@ -64,7 +64,9 @@ export async function POST(request: NextRequest, { params }: Params) {
   }
 
   // Upload to Supabase Storage
-  const fileExt = file.name.split('.').pop() || 'jpg';
+  const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'heic'];
+  const rawExt = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const fileExt = ALLOWED_EXTS.includes(rawExt) ? rawExt : 'jpg';
   const storagePath = `${id}/${crypto.randomUUID()}.${fileExt}`;
 
   const { error: uploadError } = await supabaseAdmin.storage

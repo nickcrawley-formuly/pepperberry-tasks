@@ -3,6 +3,8 @@ import { getSession } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { MAX_CHAT_MESSAGE_LENGTH } from '@/lib/constants';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
@@ -17,6 +19,10 @@ export async function GET(
   }
 
   const { userId } = await params;
+
+  if (!UUID_RE.test(userId)) {
+    return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+  }
 
   const { searchParams } = new URL(request.url);
   const before = searchParams.get('before');
@@ -57,6 +63,11 @@ export async function POST(
   }
 
   const { userId } = await params;
+
+  if (!UUID_RE.test(userId)) {
+    return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+  }
+
   const { content } = await request.json();
 
   if (!content?.trim()) {

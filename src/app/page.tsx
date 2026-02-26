@@ -27,6 +27,7 @@ function LoginForm() {
   const [usersLoading, setUsersLoading] = useState(true);
   const [forgotPinSent, setForgotPinSent] = useState(false);
   const [forgotPinLoading, setForgotPinLoading] = useState(false);
+  const [geoLocation, setGeoLocation] = useState<{ lat: number; lng: number } | null>(null);
   const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -106,7 +107,12 @@ function LoginForm() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: selectedUser, pin: fullPin }),
+        body: JSON.stringify({
+          name: selectedUser,
+          pin: fullPin,
+          latitude: geoLocation?.lat ?? null,
+          longitude: geoLocation?.lng ?? null,
+        }),
       });
 
       const data = await res.json();
@@ -172,7 +178,16 @@ function LoginForm() {
                     setPin(['', '', '', '']);
                     setError('');
                     setForgotPinSent(false);
-                    if (e.target.value) setTimeout(() => pinRefs.current[0]?.focus(), 50);
+                    if (e.target.value) {
+                      setTimeout(() => pinRefs.current[0]?.focus(), 50);
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                          (pos) => setGeoLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                          () => {},
+                          { timeout: 10000, maximumAge: 60000 }
+                        );
+                      }
+                    }
                   }}
                   disabled={usersLoading}
                   className="w-full appearance-none rounded-lg border border-fw-surface bg-fw-surface px-4 py-3 text-sm text-fw-text focus:outline-none focus:ring-2 focus:ring-fw-accent/50 focus:border-fw-accent/50 transition disabled:opacity-50"

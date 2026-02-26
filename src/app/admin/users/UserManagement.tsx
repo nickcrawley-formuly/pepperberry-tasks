@@ -41,13 +41,21 @@ interface User {
   failed_logins_since: string;
 }
 
+interface LastLocation {
+  lat: number;
+  lng: number;
+  ip: string | null;
+  at: string;
+}
+
 interface UserManagementProps {
   initialUsers: User[];
   currentUserId: string;
   loginsByUser: Record<string, Record<string, number>>;
+  lastLocationByUser: Record<string, LastLocation>;
 }
 
-export default function UserManagement({ initialUsers, currentUserId, loginsByUser }: UserManagementProps) {
+export default function UserManagement({ initialUsers, currentUserId, loginsByUser, lastLocationByUser }: UserManagementProps) {
   const router = useRouter();
   const [users, setUsers] = useState(initialUsers);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -152,6 +160,7 @@ export default function UserManagement({ initialUsers, currentUserId, loginsByUs
                 isDeleting={deletingId === user.id}
                 deleteLoading={deleteLoading}
                 loginCounts={loginsByUser[user.id] || {}}
+                lastLocation={lastLocationByUser[user.id] || null}
                 onEdit={() => setEditingId(user.id)}
                 onToggleActive={async () => {
                   const res = await fetch(`/api/users/${user.id}`, {
@@ -228,6 +237,7 @@ function UserRow({
   isDeleting,
   deleteLoading,
   loginCounts,
+  lastLocation,
   onEdit,
   onToggleActive,
   onDeleteClick,
@@ -239,6 +249,7 @@ function UserRow({
   isDeleting: boolean;
   deleteLoading: boolean;
   loginCounts: Record<string, number>;
+  lastLocation: LastLocation | null;
   onEdit: () => void;
   onToggleActive: () => void;
   onDeleteClick: () => void;
@@ -294,6 +305,21 @@ function UserRow({
               {user.last_login
                 ? `Last login: ${formatLastLogin(user.last_login)}`
                 : 'Never logged in'}
+              {lastLocation && (
+                <a
+                  href={`https://www.google.com/maps?q=${lastLocation.lat},${lastLocation.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 inline-flex items-center gap-0.5 text-fw-accent hover:text-fw-accent/80 transition"
+                  title={`Login location${lastLocation.ip ? ` · IP: ${lastLocation.ip}` : ''}`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span className="text-[10px]">Map</span>
+                </a>
+              )}
             </p>
             {isFailedLoginsActive(user.failed_logins_since) && user.failed_login_count > 0 && (
               <div className="flex items-center gap-1 mt-0.5">

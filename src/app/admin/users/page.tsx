@@ -18,7 +18,7 @@ export default async function AdminUsersPage() {
   const fourteenDaysAgo = new Date();
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
-  const [{ data: rawUsers }, { data: loginData }] = await Promise.all([
+  const [{ data: rawUsers }, { data: loginData }, { data: lastLocations }] = await Promise.all([
     supabaseAdmin
       .from('users')
       .select('id, name, role, trade_type, is_active, created_at, last_login, phone, allowed_sections, failed_login_count, failed_logins_since')
@@ -27,6 +27,11 @@ export default async function AdminUsersPage() {
       .from('login_history')
       .select('user_id, logged_in_at')
       .gte('logged_in_at', fourteenDaysAgo.toISOString())
+      .order('logged_in_at', { ascending: false }),
+    supabaseAdmin
+      .from('login_history')
+      .select('user_id, latitude, longitude, ip_address, logged_in_at')
+      .not('latitude', 'is', null)
       .order('logged_in_at', { ascending: false }),
   ]);
 
@@ -37,6 +42,19 @@ export default async function AdminUsersPage() {
     if (!loginsByUser[entry.user_id]) loginsByUser[entry.user_id] = {};
     loginsByUser[entry.user_id][dateStr] = (loginsByUser[entry.user_id][dateStr] || 0) + 1;
   });
+
+  // Build map of last login location per user (first match = most recent)
+  const lastLocationByUser: Record<string, { lat: number; lng: number; ip: string | null; at: string }> = {};
+  for (const loc of lastLocations || []) {
+    if (!lastLocationByUser[loc.user_id] && loc.latitude != null && loc.longitude != null) {
+      lastLocationByUser[loc.user_id] = {
+        lat: loc.latitude,
+        lng: loc.longitude,
+        ip: loc.ip_address,
+        at: loc.logged_in_at,
+      };
+    }
+  }
 
   const users = (rawUsers || []).sort((a, b) => {
     if (a.role === 'admin' && b.role !== 'admin') return -1;
@@ -83,7 +101,7 @@ export default async function AdminUsersPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-5 py-6">
-        <UserManagement initialUsers={users || []} currentUserId={session.userId} loginsByUser={loginsByUser} />
+        <UserManagement initialUsers={users || []} currentUserId={session.userId} loginsByUser={loginsByUser} lastLocationByUser={lastLocationByUser} />
       </main>
     </div>
   );

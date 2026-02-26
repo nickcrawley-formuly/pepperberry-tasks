@@ -195,6 +195,20 @@ export default async function DashboardPage() {
           )}
           {session.role === 'admin' && (
             <Link
+              href="/report"
+              className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 3v18h18" />
+                <path d="M18 17V9" />
+                <path d="M13 17V5" />
+                <path d="M8 17v-3" />
+              </svg>
+              Report
+            </Link>
+          )}
+          {session.role === 'admin' && (
+            <Link
               href="/admin/users"
               className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition"
             >

@@ -14,7 +14,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="text-fw-text/40 hover:text-fw-text/80 transition p-2"
+      className="text-fw-text/40 hover:text-fw-text/80 transition p-3 -m-1"
       aria-label="Log out"
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

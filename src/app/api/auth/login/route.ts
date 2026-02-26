@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { name, pin } = body;
+  const { name, pin, latitude, longitude } = body;
 
   if (!name || !pin) {
     return NextResponse.json({ error: 'Name and PIN are required' }, { status: 400 });
@@ -84,7 +84,13 @@ export async function POST(request: NextRequest) {
   const loginTime = new Date().toISOString();
   await Promise.all([
     supabaseAdmin.from('users').update({ last_login: loginTime }).eq('id', user.id),
-    supabaseAdmin.from('login_history').insert({ user_id: user.id, logged_in_at: loginTime }),
+    supabaseAdmin.from('login_history').insert({
+      user_id: user.id,
+      logged_in_at: loginTime,
+      latitude: typeof latitude === 'number' ? latitude : null,
+      longitude: typeof longitude === 'number' ? longitude : null,
+      ip_address: ip !== 'unknown' ? ip : null,
+    }),
   ]);
 
   // Notify Nick when someone logs in (don't block on it)
