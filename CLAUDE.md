@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A property management web app for **Pepperberry** — a private home property in Coolangatta, NSW, Australia. The property includes multiple paddocks, a workshop, a house and driveway. The eastern paddocks are leased to **Regal Riding**.
+A property management web app for **Pepperberry** — a private home property in Coolangatta, NSW, Australia. The property includes multiple paddocks, a workshop, a house and driveway. 
 
 The app lets the two owners (admins) assign and track jobs across the property, manage a shared shopping list, monitor local weather, and communicate via a News board and direct messages. Tradies (fencers, plumbers, electricians, handymen, landscapers, housekeepers, animal carers) log in to see only their assigned work. Regal Riding staff see only their related tasks.
 
