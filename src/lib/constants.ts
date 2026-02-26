@@ -12,19 +12,24 @@ export const CATEGORIES = [
 ] as const;
 
 export const LOCATIONS = [
-  'workshop',
-  'house',
-  'Big_Paddock',
-  'Front_paddock',
-  'Back_paddock',
-  'driveway',
-  'riding_arena',
-  'stables',
-  'Front_garden',
-  'Back_garden',
-  'VegetablePatch',
-  'front_gate',
-  'other',
+  'garden_front',
+  'garden_back',
+  'garden_veggie',
+  'garden_trees',
+  'garden_other',
+  'paddock_big',
+  'paddock_front',
+  'paddock_back',
+  'paddock_other',
+  'house_inside',
+  'house_patio',
+  'house_carport',
+  'house_gym',
+  'house_other',
+  'animals_girls',
+  'animals_regal',
+  'animals_donkeys',
+  'animals_other',
 ] as const;
 
 export const STATUS_LABELS: Record<string, string> = {
@@ -68,10 +73,10 @@ export const AREA_LABELS: Record<string, string> = {
 };
 
 export const AREA_LOCATIONS: Record<string, readonly string[]> = {
-  garden: ['Front_garden', 'Back_garden', 'VegetablePatch', 'other'],
-  paddocks: ['Big_Paddock', 'Front_paddock', 'Back_paddock', 'driveway', 'stables', 'front_gate', 'other'],
-  house: ['house', 'workshop', 'driveway', 'other'],
-  animals: ['stables', 'Big_Paddock', 'Front_paddock', 'Back_paddock', 'other'],
+  garden: ['garden_front', 'garden_back', 'garden_veggie', 'garden_trees', 'garden_other'],
+  paddocks: ['paddock_big', 'paddock_front', 'paddock_back', 'paddock_other'],
+  house: ['house_inside', 'house_patio', 'house_carport', 'house_gym', 'house_other'],
+  animals: ['animals_girls', 'animals_regal', 'animals_donkeys', 'animals_other'],
 };
 
 export const AREA_CATEGORIES: Record<string, readonly string[]> = {
@@ -105,17 +110,22 @@ export const SHOPPING_CATEGORY_LABELS: Record<string, string> = {
 };
 
 export const LOCATION_LABELS: Record<string, string> = {
-  workshop: 'Workshop',
-  house: 'House',
-  Big_Paddock: 'Big Paddock',
-  Front_paddock: 'Front Paddock',
-  Back_paddock: 'Back Paddock',
-  driveway: 'Driveway',
-  riding_arena: 'Riding Arena',
-  stables: 'Stables',
-  Front_garden: 'Front Garden',
-  Back_garden: 'Back Garden',
-  VegetablePatch: 'Veggie Patch',
-  front_gate: 'Front Gate',
-  other: 'Other',
+  garden_front: 'Front',
+  garden_back: 'Back',
+  garden_veggie: 'Veggie Beds',
+  garden_trees: 'Trees',
+  garden_other: 'Other',
+  paddock_big: 'Big',
+  paddock_front: 'Front',
+  paddock_back: 'Back',
+  paddock_other: 'Other',
+  house_inside: 'Inside',
+  house_patio: 'Patio',
+  house_carport: 'Car Port',
+  house_gym: 'Gym',
+  house_other: 'Other',
+  animals_girls: 'The Girls',
+  animals_regal: 'Regal',
+  animals_donkeys: 'Donkeys',
+  animals_other: 'Other',
 };

@@ -5,7 +5,9 @@ import {
   PRIORITY_LABELS,
   CATEGORIES,
   CATEGORY_LABELS,
-  LOCATIONS,
+  AREAS,
+  AREA_LABELS,
+  AREA_LOCATIONS,
   LOCATION_LABELS,
 } from '@/lib/constants';
 
@@ -87,10 +89,14 @@ export default function AdminFilters({
             className={selectClass}
           >
             <option value="">Location</option>
-            {LOCATIONS.map((l) => (
-              <option key={l} value={l}>
-                {LOCATION_LABELS[l]}
-              </option>
+            {AREAS.map((a) => (
+              <optgroup key={a} label={AREA_LABELS[a]}>
+                {AREA_LOCATIONS[a].map((l) => (
+                  <option key={l} value={l}>
+                    {LOCATION_LABELS[l]}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
           <DropdownArrow />
