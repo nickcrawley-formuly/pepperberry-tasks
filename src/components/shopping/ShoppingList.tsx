@@ -123,7 +123,7 @@ export default function ShoppingList({ initialItems, admins, isAdmin }: Shopping
       </form>
 
       {/* Filter tabs */}
-      <div className="flex gap-1.5 overflow-x-auto">
+      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
         {['all', ...SHOPPING_CATEGORIES].map((c) => (
           <button
             key={c}
@@ -154,12 +154,14 @@ export default function ShoppingList({ initialItems, admins, isAdmin }: Shopping
             <button
               type="button"
               onClick={() => handleToggleBought(item.id, false)}
-              className="w-6 h-6 rounded border-2 border-fw-text/20 shrink-0 hover:border-emerald-500 hover:bg-emerald-500 transition flex items-center justify-center group"
+              className="w-10 h-10 -m-2 shrink-0 hover:bg-fw-bg/30 transition flex items-center justify-center group rounded-lg"
               aria-label="Mark as bought"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-hover:opacity-100 transition">
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
+              <span className="w-6 h-6 rounded border-2 border-fw-text/20 group-hover:border-emerald-500 group-hover:bg-emerald-500 transition flex items-center justify-center">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-hover:opacity-100 transition">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </span>
             </button>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-fw-text truncate">{item.title}</p>
@@ -196,19 +198,21 @@ export default function ShoppingList({ initialItems, admins, isAdmin }: Shopping
                 <button
                   type="button"
                   onClick={() => handleToggleBought(item.id, true)}
-                  className="w-6 h-6 rounded bg-emerald-500 shrink-0 hover:bg-emerald-400 transition flex items-center justify-center"
+                  className="w-10 h-10 -m-2 shrink-0 hover:bg-fw-bg/30 transition flex items-center justify-center rounded-lg"
                   aria-label="Unmark as bought"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6L9 17l-5-5" />
-                  </svg>
+                  <span className="w-6 h-6 rounded bg-emerald-500 hover:bg-emerald-400 transition flex items-center justify-center">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
                 </button>
                 <p className="text-sm text-fw-text/50 line-through truncate flex-1">{item.title}</p>
                 {isAdmin && (
                   <button
                     type="button"
                     onClick={() => handleDelete(item.id)}
-                    className="p-1.5 text-fw-text/30 hover:text-red-400 transition"
+                    className="p-2.5 -m-1 text-fw-text/30 hover:text-red-400 transition"
                     aria-label="Delete item"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

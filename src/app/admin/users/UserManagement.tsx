@@ -85,7 +85,7 @@ export default function UserManagement({ initialUsers, currentUserId, loginsByUs
         {!showAddForm && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover transition"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover transition"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +107,7 @@ export default function UserManagement({ initialUsers, currentUserId, loginsByUs
         <button
           onClick={handleLogoutAll}
           disabled={logoutAllLoading || logoutAllDone}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-red-500/40 text-red-400 text-sm font-medium hover:bg-red-900/20 transition disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border border-red-500/40 text-red-400 text-sm font-medium hover:bg-red-900/20 transition disabled:opacity-50"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -336,11 +336,11 @@ function UserRow({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
           <button
             onClick={onEdit}
             title="Edit user"
-            className="p-1.5 rounded-lg text-fw-text/40 hover:text-fw-text/80 hover:bg-fw-bg transition"
+            className="p-2.5 rounded-lg text-fw-text/40 hover:text-fw-text/80 hover:bg-fw-bg transition"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
@@ -351,7 +351,7 @@ function UserRow({
             <button
               onClick={onDeleteClick}
               title="Delete user"
-              className="p-1.5 rounded-lg text-fw-text/40 hover:text-red-600 hover:bg-red-900/30 transition"
+              className="p-2.5 rounded-lg text-fw-text/40 hover:text-red-600 hover:bg-red-900/30 transition"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 6h18" />

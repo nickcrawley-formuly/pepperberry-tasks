@@ -103,23 +103,8 @@ function LoginForm() {
     setError('');
     setLoading(true);
 
-    // Try to get location if we don't have it yet (quick 3s attempt)
-    let loc = geoRef.current;
-    if (!loc && navigator.geolocation) {
-      loc = await new Promise<{ lat: number; lng: number } | null>((resolve) => {
-        const timer = setTimeout(() => resolve(null), 3000);
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            clearTimeout(timer);
-            const result = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-            geoRef.current = result;
-            resolve(result);
-          },
-          () => { clearTimeout(timer); resolve(null); },
-          { timeout: 3000, maximumAge: 60000 }
-        );
-      });
-    }
+    // Use whatever geolocation we have — never block login waiting for it
+    const loc = geoRef.current;
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -198,15 +183,15 @@ function LoginForm() {
                     setForgotPinSent(false);
                     if (e.target.value) {
                       setTimeout(() => pinRefs.current[0]?.focus(), 50);
-                      if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
+                      try {
+                        navigator.geolocation?.getCurrentPosition(
                           (pos) => {
                             geoRef.current = { lat: pos.coords.latitude, lng: pos.coords.longitude };
                           },
                           () => {},
                           { timeout: 10000, maximumAge: 60000 }
                         );
-                      }
+                      } catch { /* geolocation unavailable */ }
                     }
                   }}
                   disabled={usersLoading}

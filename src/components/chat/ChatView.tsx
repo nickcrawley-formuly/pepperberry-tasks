@@ -193,7 +193,7 @@ function BoardTab({
                   {isAdmin && (
                     <button
                       onClick={() => handleDelete(msg.id)}
-                      className="text-red-400 hover:text-red-500 transition ml-auto p-1.5 -m-1.5"
+                      className="text-red-400 hover:text-red-500 transition ml-auto p-2.5 -m-2"
                       title="Delete message"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -218,12 +218,13 @@ function BoardTab({
           onChange={(e) => setInput(e.target.value)}
           maxLength={MAX_CHAT_MESSAGE_LENGTH}
           placeholder="Write a message..."
-          className="flex-1 min-w-0 rounded-lg border border-fw-surface px-3 py-2 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition"
+          enterKeyHint="send"
+          className="flex-1 min-w-0 rounded-lg border border-fw-surface px-3 py-2.5 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition"
         />
         <button
           type="submit"
           disabled={!input.trim() || sending}
-          className="px-4 py-2 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+          className="px-4 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
         >
           {sending ? '...' : 'Send'}
         </button>
@@ -525,12 +526,13 @@ function DMThread({
           onChange={(e) => setInput(e.target.value)}
           maxLength={MAX_CHAT_MESSAGE_LENGTH}
           placeholder="Write a message..."
-          className="flex-1 min-w-0 rounded-lg border border-fw-surface px-3 py-2 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition"
+          enterKeyHint="send"
+          className="flex-1 min-w-0 rounded-lg border border-fw-surface px-3 py-2.5 text-sm text-fw-text bg-fw-surface placeholder:text-fw-text/30 focus:outline-none focus:ring-2 focus:ring-fw-accent focus:border-transparent transition"
         />
         <button
           type="submit"
           disabled={!input.trim() || sending}
-          className="px-4 py-2 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+          className="px-4 py-2.5 rounded-lg bg-fw-accent text-white text-sm font-medium hover:bg-fw-hover active:bg-fw-hover transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
         >
           {sending ? '...' : 'Send'}
         </button>
