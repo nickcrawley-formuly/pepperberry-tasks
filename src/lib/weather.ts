@@ -130,11 +130,11 @@ export async function fetchWeatherData(): Promise<WeatherData> {
 
   // Fetch all in parallel
   const [forecastRes, ly30Res, ytdThisRes, ytdLastRes, marineRes] = await Promise.all([
-    fetch(forecastUrl, { next: { revalidate: 300 } }),
+    fetch(forecastUrl, { cache: 'no-store' }),
     fetch(lastYear30Url, { next: { revalidate: 86400 } }),
-    fetch(ytdThisYearUrl, { next: { revalidate: 300 } }),
+    fetch(ytdThisYearUrl, { cache: 'no-store' }),
     fetch(ytdLastYearUrl, { next: { revalidate: 86400 } }),
-    fetch(marineUrl, { next: { revalidate: 3600 } }),
+    fetch(marineUrl, { cache: 'no-store' }),
   ]);
 
   if (!forecastRes.ok) {
